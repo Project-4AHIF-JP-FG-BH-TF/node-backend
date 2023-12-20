@@ -18,4 +18,8 @@ export class ExampleService {
     async getAllExamples(): Promise<ExampleData[]> {
         return await ExampleStore.get().getAllExamples();
     }
+
+    async getExampleById(id: number): Promise<ExampleData> {
+        return await ExampleStore.get().getExampleById(id);
+    }
 }

@@ -10,5 +10,13 @@ export function getExampleRouter(): Router {
         res.status(200).json(examples).end();
     })
 
+    router.get("/:id", async (req, res) => {
+        let id = Number.parseInt(req.params.id);
+
+        let example = await ExampleService.get().getExampleById(id);
+
+        res.status(200).json(example).end();
+    })
+
     return router;
 }

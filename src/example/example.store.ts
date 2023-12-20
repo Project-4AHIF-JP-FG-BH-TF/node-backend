@@ -26,6 +26,21 @@ export class ExampleStore {
 
         return result.rows;
     }
+
+    async getExampleById(id: number): Promise<ExampleData> {
+        let query = {
+            text: `
+                SELECT *
+                FROM logs.log
+                WHERE id = $1
+            `,
+            values: [id]
+        }
+
+        const result = await client.query(query);
+
+        return result.rows[0];
+    }
 }
 
 export interface ExampleData {
