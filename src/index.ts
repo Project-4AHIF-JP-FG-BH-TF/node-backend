@@ -1,7 +1,7 @@
-import * as express from "express";
+import express from "express";
 
 const port = 3000;
-const app = express();
+let app = express();
 
 app.get("/", (_req, res) => {
   res.send("moin");
