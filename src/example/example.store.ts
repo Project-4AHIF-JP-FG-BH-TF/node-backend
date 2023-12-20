@@ -23,7 +23,6 @@ export class ExampleStore {
             `
 
         const result = await client.query(query);
-        await client.end();
 
         return result.rows;
     }
