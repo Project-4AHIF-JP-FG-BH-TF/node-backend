@@ -1,19 +1,19 @@
 import express from "express";
-import { client } from "./db/dbConfig";
 import cors from "cors";
+import { client } from "./db/dbConfig";
 import "dotenv/config";
 import { getExampleRouter } from "./example/example.router";
 
 const port = parseInt(process.env.BACKEND_PORT as string);
 const server = express();
 
-//enable json in body
+// enable json in body
 server.use(express.json());
 
-//enable cors
+// enable cors
 server.use(cors());
 
-//add routers
+// add routers
 server.use("/api/example/", getExampleRouter());
 
 server.listen(port, async () => {

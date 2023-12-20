@@ -1,25 +1,21 @@
-import {ExampleData, ExampleStore} from "./example.store";
+import { ExampleData, ExampleStore } from "./example.store";
 
 export class ExampleService {
+  static instance: ExampleService | undefined;
 
-    static instance: ExampleService | undefined
-
-    static get(): ExampleService {
-        if (ExampleService.instance == undefined) {
-            ExampleService.instance = new ExampleService();
-        }
-
-        return ExampleService.instance;
+  static get(): ExampleService {
+    if (ExampleService.instance === undefined) {
+      ExampleService.instance = new ExampleService();
     }
 
-    private constructor() {
-    }
+    return ExampleService.instance;
+  }
 
-    async getAllExamples(): Promise<ExampleData[]> {
-        return await ExampleStore.get().getAllExamples();
-    }
+  async getAllExamples(): Promise<ExampleData[]> {
+    return await ExampleStore.get().getAllExamples();
+  }
 
-    async getExampleById(id: number): Promise<ExampleData> {
-        return await ExampleStore.get().getExampleById(id);
-    }
+  async getExampleById(id: number): Promise<ExampleData> {
+    return await ExampleStore.get().getExampleById(id);
+  }
 }

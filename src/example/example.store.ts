@@ -1,49 +1,44 @@
-import {client} from "../db/dbConfig";
+import { client } from "../db/dbConfig";
 
 export class ExampleStore {
+  static instance: ExampleStore | undefined;
 
-    static instance: ExampleStore | undefined;
-
-    static get(): ExampleStore {
-        if (ExampleStore.instance == undefined) {
-            ExampleStore.instance = new ExampleStore();
-        }
-
-        return ExampleStore.instance;
+  static get(): ExampleStore {
+    if (ExampleStore.instance === undefined) {
+      ExampleStore.instance = new ExampleStore();
     }
 
-    private constructor() {
-    }
+    return ExampleStore.instance;
+  }
 
-    async getAllExamples(): Promise<ExampleData[]> {
-        let query =
-            `
+  async getAllExamples(): Promise<ExampleData[]> {
+    const query = `
                 SELECT *
                 FROM logs.log
-            `
+            `;
 
-        const result = await client.query(query);
+    const result = await client.query(query);
 
-        return result.rows;
-    }
+    return result.rows;
+  }
 
-    async getExampleById(id: number): Promise<ExampleData> {
-        let query = {
-            text: `
+  async getExampleById(id: number): Promise<ExampleData> {
+    const query = {
+      text: `
                 SELECT *
                 FROM logs.log
                 WHERE id = $1
             `,
-            values: [id]
-        }
+      values: [id],
+    };
 
-        const result = await client.query(query);
+    const result = await client.query(query);
 
-        return result.rows[0];
-    }
+    return result.rows[0];
+  }
 }
 
 export interface ExampleData {
-    id: number,
-    message: string
+  id: number;
+  message: string;
 }
