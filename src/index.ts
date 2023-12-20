@@ -1,28 +1,22 @@
 import express from "express";
-import {client} from "./config";
+import {client} from "./db/dbConfig";
+import cors from "cors";
+import 'dotenv/config'
+import {getExampleRouter} from "./example/example.router";
 
-const port = 3000;
-const app = express();
+const port = parseInt(process.env.BACKEND_PORT as string);
+const server = express();
 
-app.get("/", (req, res) => {
-    res.send("moin");
-})
+//enable json in body
+server.use(express.json());
 
-app.get("/person/", async (req, res) => {
-    let query = `
-        SELECT *
-        FROM person
-    `
+//enable cors
+server.use(cors());
 
-    const result = await client.query(query);
-    await client.end();
+//add routers
+server.use("/api/example/", getExampleRouter());
 
-    res.send(result.rows)
-    res.end();
-})
-
-app.listen(port, async () => {
-    console.log("backend running on port: " + port);
-
+server.listen(port, async () => {
     await client.connect();
+    console.log("backend running on port: " + port);
 })
