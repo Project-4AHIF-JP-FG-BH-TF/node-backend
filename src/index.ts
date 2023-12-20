@@ -1,6 +1,6 @@
 import express from "express";
-import { client } from "./db/dbConfig";
 import cors from "cors";
+import { client } from "./db/dbConfig";
 import "dotenv/config";
 import { getExampleRouter } from "./example/example.router";
 
