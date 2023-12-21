@@ -1,5 +1,10 @@
 import { client } from "../db/dbConfig";
 
+export interface ExampleData {
+  id: number;
+  message: string;
+}
+
 export class ExampleStore {
   static instance: ExampleStore | undefined;
 
@@ -36,9 +41,4 @@ export class ExampleStore {
 
     return result.rows[0];
   }
-}
-
-export interface ExampleData {
-  id: number;
-  message: string;
 }
