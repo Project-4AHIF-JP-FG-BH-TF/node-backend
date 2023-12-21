@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc src/index.ts",
+    "build": "tsc",
     "start": "node src/index.js",
     "dev": "ts-node-dev --respawn --pretty --transpile-only src/index.ts",
     "lint:js": "eslint --ext \".ts,.vue\" --ignore-path .gitignore .",
