@@ -1,5 +1,5 @@
-import { client } from "../db/dbConfig";
-import {ExampleData} from "./types/example";
+import { DatabaseService } from "../db/dbConfig";
+import { ExampleData } from "./types/example";
 
 export class ExampleStore {
   static instance: ExampleStore | undefined;
@@ -18,7 +18,7 @@ export class ExampleStore {
                 FROM logs.log
             `;
 
-    const result = await client.query(query);
+    const result = await DatabaseService.getInstance().getClient().query(query);
 
     return result.rows;
   }
@@ -33,7 +33,7 @@ export class ExampleStore {
       values: [id],
     };
 
-    const result = await client.query(query);
+    const result = await DatabaseService.getInstance().getClient().query(query);
 
     return result.rows[0];
   }

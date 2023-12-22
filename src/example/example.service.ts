@@ -1,5 +1,5 @@
 import { ExampleStore } from "./example.store";
-import {ExampleData} from "./types/example";
+import { ExampleData } from "./types/example";
 
 export class ExampleService {
   static instance: ExampleService | undefined;
