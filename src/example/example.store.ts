@@ -1,14 +1,10 @@
 import { client } from "../db/dbConfig";
-
-export interface ExampleData {
-  id: number;
-  message: string;
-}
+import {ExampleData} from "./types/example";
 
 export class ExampleStore {
   static instance: ExampleStore | undefined;
 
-  static get(): ExampleStore {
+  static getInstance(): ExampleStore {
     if (ExampleStore.instance === undefined) {
       ExampleStore.instance = new ExampleStore();
     }

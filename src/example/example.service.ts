@@ -1,9 +1,10 @@
-import { ExampleData, ExampleStore } from "./example.store";
+import { ExampleStore } from "./example.store";
+import {ExampleData} from "./types/example";
 
 export class ExampleService {
   static instance: ExampleService | undefined;
 
-  static get(): ExampleService {
+  static getInstance(): ExampleService {
     if (ExampleService.instance === undefined) {
       ExampleService.instance = new ExampleService();
     }
@@ -12,10 +13,10 @@ export class ExampleService {
   }
 
   async getAllExamples(): Promise<ExampleData[]> {
-    return await ExampleStore.get().getAllExamples();
+    return await ExampleStore.getInstance().getAllExamples();
   }
 
   async getExampleById(id: number): Promise<ExampleData> {
-    return await ExampleStore.get().getExampleById(id);
+    return await ExampleStore.getInstance().getExampleById(id);
   }
 }
