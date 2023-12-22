@@ -11,7 +11,7 @@ export class DatabaseService {
       port: parseInt(process.env.DB_PORT as string),
       database: process.env.DATABASE,
       user: process.env.DB_USER,
-      password: process.env.DB_KPASSWORD as string,
+      password: process.env.DB_PASSWORD as string,
     });
   }
 
