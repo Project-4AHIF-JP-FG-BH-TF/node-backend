@@ -12,5 +12,7 @@ module.exports = {
   plugins: [],
   rules: {
     "no-console": "off",
+    "no-use-before-define": "off",
+    "import/no-named-as-default-member": "off",
   },
 };
