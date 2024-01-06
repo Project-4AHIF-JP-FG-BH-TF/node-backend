@@ -18,7 +18,7 @@ server.use(cors());
 // add routers
 server.use("/api/example/", getExampleRouter());
 server.use("/api/session/", getSessionRouter());
-server.use("/api/logentry", getLogEntryRouter());
+server.use("/api/log", getLogEntryRouter());
 
 server.listen(port, async () => {
   await DatabaseService.getInstance().getClient().connect();
