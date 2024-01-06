@@ -34,6 +34,10 @@ export class SessionService {
     return session;
   }
 
+  async refresh(session: UUID): Promise<UUID | null> {
+    return await SessionStore.getInstance().refresh(session);
+  }
+
   // frequently checks if a session's-ttl is over and closes the session
   private watchSession(sessionID: UUID) {
     const interval = setInterval(async () => {

@@ -93,4 +93,24 @@ export class SessionStore {
       return [];
     }
   }
+
+  async refresh(session: UUID): Promise<UUID | null> {
+    const query = {
+      text: `
+          UPDATE loggaroo.session
+            SET last_refresh = NOW()
+            WHERE session_id = $1
+      `,
+      values: [session],
+    };
+
+    try {
+      await DatabaseService.getInstance().getClient().query(query);
+
+      return session;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  }
 }
