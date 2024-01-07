@@ -17,7 +17,7 @@ export function getLogEntryRouter(): Router {
     if (
       !Number.isFinite(logEntryData.from) ||
       !Number.isFinite(logEntryData.count) ||
-      logEntryData.files.length == 0
+      logEntryData.files.length === 0
     ) {
       res.status(400).end();
       return;
