@@ -1,6 +1,6 @@
 import { UUID } from "node:crypto";
 import { DatabaseService } from "../db/dbConfig";
-import { LogEntry, LogEntryError } from "./logEntry";
+import { LogEntry, LogEntryRequestError } from "./logEntry";
 
 export class LogEntryStore {
   static instance: LogEntryStore | undefined;
@@ -18,14 +18,15 @@ export class LogEntryStore {
     files: string[],
     from: number,
     count: number,
-  ): Promise<LogEntry[] | LogEntryError> {
+  ): Promise<LogEntry[] | LogEntryRequestError> {
     try {
       const query = {
         text: `
             SELECT *
             FROM loggaroo.log_entry
               WHERE session_id = $1
-                AND file_name IN $2
+                AND file_name = ANY($2)
+              ORDER BY creation_date
               OFFSET $3
               LIMIT $4  
         `,
@@ -39,7 +40,7 @@ export class LogEntryStore {
       return result.rows;
     } catch (e) {
       console.log(e);
-      return LogEntryError.serverError;
+      return LogEntryRequestError.serverError;
     }
   }
 }

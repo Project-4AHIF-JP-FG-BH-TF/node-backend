@@ -1,6 +1,10 @@
 import { UUID } from "node:crypto";
 import { LogEntryStore } from "./logEntry.store";
-import { LogEntry, LogEntryData, LogEntryError } from "./logEntry";
+import {
+  LogEntry,
+  LogEntryRequestData,
+  LogEntryRequestError,
+} from "./logEntry";
 
 export class LogEntryService {
   static instance: LogEntryService | undefined;
@@ -15,12 +19,16 @@ export class LogEntryService {
 
   async get(
     sessionID: UUID,
-    logEntryData: LogEntryData,
-  ): Promise<LogEntry[] | LogEntryError> {
+    logEntryData: LogEntryRequestData,
+  ): Promise<LogEntry[] | LogEntryRequestError> {
     try {
       const files: string[] = logEntryData.files;
       const from: number = logEntryData.from;
       const count: number = logEntryData.count;
+
+      if (from < 0 || count < 0) {
+        return LogEntryRequestError.wrongBodyData;
+      }
 
       return await LogEntryStore.getInstance().get(
         sessionID,
@@ -29,7 +37,7 @@ export class LogEntryService {
         count,
       );
     } catch (e) {
-      return LogEntryError.wrongBodyData;
+      return LogEntryRequestError.wrongBodyData;
     }
   }
 }

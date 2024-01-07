@@ -18,13 +18,13 @@ export enum Classification {
   error,
 }
 
-export type LogEntryData = {
+export type LogEntryRequestData = {
   from: number;
   count: number;
   files: string[];
 };
 
-export enum LogEntryError {
+export enum LogEntryRequestError {
   wrongBodyData,
   serverError,
 }
