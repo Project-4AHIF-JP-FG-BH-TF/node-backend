@@ -1,5 +1,5 @@
-import { Router } from "express";
 import { UUID } from "node:crypto";
+import { Router } from "express";
 import { LogEntryService } from "./logEntry.service";
 import { LogEntry, LogEntryData, LogEntryError } from "./logEntry";
 
@@ -13,7 +13,7 @@ export function getLogEntryRouter(): Router {
     const log: LogEntry[] | LogEntryError =
       await LogEntryService.getInstance().get(sessionID, logEntryData);
 
-    if (log == LogEntryError.serverError) {
+    if (log === LogEntryError.serverError) {
       res.status(500).end();
     } else if (log === LogEntryError.wrongBodyData) {
       res.status(400).end();

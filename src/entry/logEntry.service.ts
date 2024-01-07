@@ -1,5 +1,5 @@
-import { LogEntryStore } from "./logEntry.store";
 import { UUID } from "node:crypto";
+import { LogEntryStore } from "./logEntry.store";
 import { LogEntry, LogEntryData, LogEntryError } from "./logEntry";
 
 export class LogEntryService {
@@ -18,9 +18,9 @@ export class LogEntryService {
     logEntryData: LogEntryData,
   ): Promise<LogEntry[] | LogEntryError> {
     try {
-      let files: string[] = logEntryData.files;
-      let from: number = logEntryData.from;
-      let count: number = logEntryData.count;
+      const files: string[] = logEntryData.files;
+      const from: number = logEntryData.from;
+      const count: number = logEntryData.count;
 
       return await LogEntryStore.getInstance().get(
         sessionID,
