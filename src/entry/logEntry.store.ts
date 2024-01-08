@@ -18,17 +18,20 @@ export class LogEntryStore {
     files: string[],
     from: number,
     count: number,
+    sortingOrderDESC: boolean | undefined,
   ): Promise<LogEntry[] | LogEntryRequestError> {
     try {
+      const order = sortingOrderDESC ? "DESC" : "ASC";
+
       const query = {
         text: `
             SELECT *
             FROM loggaroo.log_entry
               WHERE session_id = $1
                 AND file_name = ANY($2)
-              ORDER BY creation_date
+              ORDER BY creation_date ${order}
               OFFSET $3
-              LIMIT $4  
+              LIMIT $4
         `,
         values: [sessionID, files, from, count],
       };

@@ -22,6 +22,7 @@ export type LogEntryRequestData = {
   from: number;
   count: number;
   files: string[];
+  sortingOrderDESC: boolean | undefined;
 };
 
 export enum LogEntryRequestError {
