@@ -24,7 +24,7 @@ export class LogEntryService {
     try {
       const from: number = logEntryData.from;
       const count: number = logEntryData.count;
-      const sortingOrderDESC = logEntryData.sortingOrderDESC;
+      const sortingOrderDESC = logEntryData.order;
 
       if (from < 0 || count < 0) {
         return LogEntryRequestError.wrongBodyData;
@@ -32,7 +32,8 @@ export class LogEntryService {
 
       // order
       if (
-        typeof sortingOrderDESC !== "boolean" &&
+        sortingOrderDESC !== "ASC" &&
+        sortingOrderDESC !== "DESC" &&
         typeof sortingOrderDESC !== "undefined"
       ) {
         return LogEntryRequestError.wrongBodyData;

@@ -23,11 +23,10 @@ export class LogEntryStore {
     logEntryRequestData: LogEntryRequestData,
   ): Promise<LogEntry[] | LogEntryRequestError> {
     try {
-      logEntryRequestData.sortingOrderDESC =
-        logEntryRequestData.sortingOrderDESC === undefined
-          ? false
-          : logEntryRequestData.sortingOrderDESC;
-      const order = logEntryRequestData.sortingOrderDESC ? "DESC" : "ASC";
+      logEntryRequestData.order =
+        logEntryRequestData.order === undefined
+          ? "ASC"
+          : logEntryRequestData.order;
 
       const queryParams: any[] = [sessionID, logEntryRequestData.files];
       let queryString = `
@@ -78,7 +77,7 @@ export class LogEntryStore {
       }
 
       queryString += `
-              ORDER BY creation_date ${order}
+              ORDER BY creation_date ${logEntryRequestData.order}
               OFFSET $${queryParams.length + 1}
               LIMIT $${queryParams.length + 2}
               `;

@@ -23,7 +23,7 @@ export type LogEntryRequestData = {
   count: number;
   files: string[];
 
-  sortingOrderDESC: boolean | undefined;
+  order: "ASC" | "DESC" | undefined;
 
   filters: Filters | undefined;
 };
@@ -32,7 +32,7 @@ export type Filters = {
   date: RangeDate | undefined;
   ip: string | undefined;
   text: string | undefined;
-  regex: string | undefined;
+  regex: boolean | undefined;
   classification: Classification | undefined;
 };
 
