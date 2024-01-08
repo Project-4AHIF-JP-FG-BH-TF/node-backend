@@ -22,29 +22,24 @@ export class LogEntryService {
     logEntryData: LogEntryRequestData,
   ): Promise<LogEntry[] | LogEntryRequestError> {
     try {
-      const files: string[] = logEntryData.files;
       const from: number = logEntryData.from;
       const count: number = logEntryData.count;
-      const sortingOrderDESC = logEntryData.sortingOrderDESC;
+      const sortingOrderDESC = logEntryData.order;
 
       if (from < 0 || count < 0) {
         return LogEntryRequestError.wrongBodyData;
       }
 
+      // order
       if (
-        typeof sortingOrderDESC !== "boolean" &&
+        sortingOrderDESC !== "ASC" &&
+        sortingOrderDESC !== "DESC" &&
         typeof sortingOrderDESC !== "undefined"
       ) {
         return LogEntryRequestError.wrongBodyData;
       }
 
-      return await LogEntryStore.getInstance().get(
-        sessionID,
-        files,
-        from,
-        count,
-        sortingOrderDESC === undefined ? false : sortingOrderDESC,
-      );
+      return await LogEntryStore.getInstance().get(sessionID, logEntryData);
     } catch (e) {
       return LogEntryRequestError.wrongBodyData;
     }
