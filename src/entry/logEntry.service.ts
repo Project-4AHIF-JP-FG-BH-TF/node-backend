@@ -27,21 +27,31 @@ export class LogEntryService {
       const count: number = logEntryData.count;
       const sortingOrderDESC = logEntryData.sortingOrderDESC;
 
-      const ip = logEntryData.filters.ip;
-      const text = logEntryData.filters.text;
-      const regex = logEntryData.filters.regex;
-      const classification = logEntryData.filters.classification;
-      const date = logEntryData.filters.date;
-
       if (from < 0 || count < 0) {
         return LogEntryRequestError.wrongBodyData;
       }
 
+      //order
       if (
         typeof sortingOrderDESC !== "boolean" &&
         typeof sortingOrderDESC !== "undefined"
       ) {
         return LogEntryRequestError.wrongBodyData;
+      }
+
+      let ip = undefined;
+      let text = undefined;
+      let regex = undefined;
+      let classification = undefined;
+      let date = undefined;
+
+      //filter
+      if (logEntryData.filters !== undefined) {
+        ip = logEntryData.filters.ip;
+        text = logEntryData.filters.text;
+        regex = logEntryData.filters.regex;
+        classification = logEntryData.filters.classification;
+        date = logEntryData.filters.date;
       }
 
       return await LogEntryStore.getInstance().get(

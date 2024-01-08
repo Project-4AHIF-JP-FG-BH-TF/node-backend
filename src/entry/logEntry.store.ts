@@ -66,7 +66,7 @@ export class LogEntryStore {
       }
 
       queryString += `
-                ORDER BY creation_date ${order}
+              ORDER BY creation_date ${order}
               OFFSET $${queryParams.length + 1}
               LIMIT $${queryParams.length + 2}
               `;
