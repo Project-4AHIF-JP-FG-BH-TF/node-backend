@@ -32,8 +32,8 @@ export class LogEntryService {
       }
 
       if (
-        typeof sortingOrderDESC != "boolean" &&
-        typeof sortingOrderDESC != "undefined"
+        typeof sortingOrderDESC !== "boolean" &&
+        typeof sortingOrderDESC !== "undefined"
       ) {
         return LogEntryRequestError.wrongBodyData;
       }

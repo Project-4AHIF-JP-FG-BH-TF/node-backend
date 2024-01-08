@@ -4,7 +4,7 @@ import "dotenv/config";
 import { getExampleRouter } from "./example/example.router";
 import { getSessionRouter } from "./session/session.router";
 import { getLogEntryRouter } from "./entry/logEntry.router";
-import {DatabaseService} from "./db/dbConfig";
+import { DatabaseService } from "./db/dbConfig";
 
 const port = parseInt(process.env.BACKEND_PORT as string);
 const server = express();
