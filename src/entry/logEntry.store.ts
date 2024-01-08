@@ -28,7 +28,7 @@ export class LogEntryStore {
     try {
       const order = sortingOrderDESC ? "DESC" : "ASC";
 
-      let queryParams: any[] = [sessionID, files];
+      const queryParams: any[] = [sessionID, files];
       let queryString = `
       SELECT *
             FROM loggaroo.log_entry
