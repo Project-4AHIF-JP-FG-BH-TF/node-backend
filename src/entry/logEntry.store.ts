@@ -43,12 +43,13 @@ export class LogEntryStore {
 
       if (logEntryRequestData.filters?.text) {
         queryParams.push(logEntryRequestData.filters.text);
-        queryString += "AND content = $" + queryParams.length;
-      }
 
-      if (logEntryRequestData.filters?.regex) {
-        queryParams.push(logEntryRequestData.filters.regex);
-        queryString += "AND content ~ $" + queryParams.length;
+        //todo regex nullable
+        if (logEntryRequestData.filters.regex) {
+          queryString += "AND content ~ $" + queryParams.length;
+        } else {
+          queryString += "AND content = $" + queryParams.length;
+        }
       }
 
       if (logEntryRequestData.filters?.classification) {
