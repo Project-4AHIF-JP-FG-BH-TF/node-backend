@@ -36,7 +36,7 @@ export type LogEntryRequestData = {
 
 export type RangeDate = {
   from: Date;
-  to: Date;
+  to: Date | undefined;
 };
 
 export enum LogEntryRequestError {

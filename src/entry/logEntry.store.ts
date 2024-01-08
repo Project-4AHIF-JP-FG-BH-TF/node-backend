@@ -57,8 +57,11 @@ export class LogEntryStore {
       }
 
       if (date) {
-        queryParams.push(date.to);
         queryParams.push(date.from);
+
+        if (date.to) queryParams.push(date.to);
+        else queryParams.push(new Date(Date.now()).toISOString().split("T")[0]);
+
         queryString += `AND creation_date BETWEEN $${
           queryParams.length - 1
         } AND $${queryParams.length}`;
