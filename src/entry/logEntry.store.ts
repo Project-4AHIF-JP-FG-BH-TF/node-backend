@@ -48,8 +48,7 @@ export class LogEntryStore {
 
       if (regex) {
         queryParams.push(regex);
-        //todo use regex
-        queryString += "AND content = $" + queryParams.length;
+        queryString += "AND content ~ $" + queryParams.length;
       }
 
       if (classification) {
