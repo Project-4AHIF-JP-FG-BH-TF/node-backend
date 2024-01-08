@@ -43,7 +43,7 @@ export class LogEntryService {
         files,
         from,
         count,
-        sortingOrderDESC,
+        sortingOrderDESC === undefined ? false : sortingOrderDESC,
       );
     } catch (e) {
       return LogEntryRequestError.wrongBodyData;

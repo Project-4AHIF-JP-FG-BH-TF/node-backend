@@ -18,7 +18,7 @@ export class LogEntryStore {
     files: string[],
     from: number,
     count: number,
-    sortingOrderDESC: boolean | undefined,
+    sortingOrderDESC: boolean,
   ): Promise<LogEntry[] | LogEntryRequestError> {
     try {
       const order = sortingOrderDESC ? "DESC" : "ASC";
