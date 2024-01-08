@@ -1,6 +1,6 @@
 import { UUID } from "node:crypto";
 import { DatabaseService } from "../db/dbConfig";
-import { LogEntry, LogEntryRequestError } from "./logEntry";
+import { LogEntry, LogEntryRequestError, RangeDate } from "./logEntry";
 
 export class LogEntryStore {
   static instance: LogEntryStore | undefined;
@@ -19,21 +19,63 @@ export class LogEntryStore {
     from: number,
     count: number,
     sortingOrderDESC: boolean,
+    ip: string | undefined,
+    text: string | undefined,
+    regex: string | undefined,
+    classification: string | undefined,
+    date: RangeDate | undefined,
   ): Promise<LogEntry[] | LogEntryRequestError> {
     try {
       const order = sortingOrderDESC ? "DESC" : "ASC";
 
-      const query = {
-        text: `
-            SELECT *
+      let queryParams: any[] = [sessionID, files];
+      let queryString = `
+      SELECT *
             FROM loggaroo.log_entry
               WHERE session_id = $1
                 AND file_name = ANY($2)
-              ORDER BY creation_date ${order}
-              OFFSET $3
-              LIMIT $4
-        `,
-        values: [sessionID, files, from, count],
+                `;
+
+      if (ip) {
+        queryParams.push(ip);
+        queryString += "AND service_ip = $" + queryParams.length;
+      }
+
+      if (text) {
+        queryParams.push(text);
+        queryString += "AND content = $" + queryParams.length;
+      }
+
+      if (regex) {
+        queryParams.push(regex);
+        //todo use regex
+        queryString += "AND content = $" + queryParams.length;
+      }
+
+      if (classification) {
+        queryParams.push(classification);
+        queryString += "AND service_ip = $" + queryParams.length;
+      }
+
+      if (date) {
+        queryParams.push(date.to);
+        queryParams.push(date.from);
+        queryString += `AND creation_date BETWEEN $${
+          queryParams.length - 1
+        } AND $${queryParams.length}`;
+      }
+
+      queryString += `
+                ORDER BY creation_date ${order}
+              OFFSET $${queryParams.length + 1}
+              LIMIT $${queryParams.length + 2}
+              `;
+
+      queryParams.push(from, count);
+
+      const query = {
+        text: queryString,
+        values: queryParams,
       };
 
       const result = await DatabaseService.getInstance()

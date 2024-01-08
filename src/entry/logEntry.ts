@@ -22,7 +22,21 @@ export type LogEntryRequestData = {
   from: number;
   count: number;
   files: string[];
+
   sortingOrderDESC: boolean | undefined;
+
+  filters: {
+    date: RangeDate | undefined;
+    ip: string | undefined;
+    text: string | undefined;
+    regex: string | undefined;
+    classification: string | undefined;
+  };
+};
+
+export type RangeDate = {
+  from: Date;
+  to: Date;
 };
 
 export enum LogEntryRequestError {

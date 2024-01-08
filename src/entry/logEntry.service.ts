@@ -27,6 +27,12 @@ export class LogEntryService {
       const count: number = logEntryData.count;
       const sortingOrderDESC = logEntryData.sortingOrderDESC;
 
+      const ip = logEntryData.filters.ip;
+      const text = logEntryData.filters.text;
+      const regex = logEntryData.filters.regex;
+      const classification = logEntryData.filters.classification;
+      const date = logEntryData.filters.date;
+
       if (from < 0 || count < 0) {
         return LogEntryRequestError.wrongBodyData;
       }
@@ -44,6 +50,11 @@ export class LogEntryService {
         from,
         count,
         sortingOrderDESC === undefined ? false : sortingOrderDESC,
+        ip,
+        text,
+        regex,
+        classification,
+        date,
       );
     } catch (e) {
       return LogEntryRequestError.wrongBodyData;
