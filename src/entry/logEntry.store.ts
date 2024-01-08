@@ -1,6 +1,11 @@
 import { UUID } from "node:crypto";
 import { DatabaseService } from "../db/dbConfig";
-import { LogEntry, LogEntryRequestError, RangeDate } from "./logEntry";
+import {
+  LogEntry,
+  LogEntryRequestData,
+  LogEntryRequestError,
+  RangeDate,
+} from "./logEntry";
 
 export class LogEntryStore {
   static instance: LogEntryStore | undefined;
@@ -15,20 +20,16 @@ export class LogEntryStore {
 
   async get(
     sessionID: UUID,
-    files: string[],
-    from: number,
-    count: number,
-    sortingOrderDESC: boolean,
-    ip: string | undefined,
-    text: string | undefined,
-    regex: string | undefined,
-    classification: string | undefined,
-    date: RangeDate | undefined,
+    logEntryRequestData: LogEntryRequestData,
   ): Promise<LogEntry[] | LogEntryRequestError> {
     try {
-      const order = sortingOrderDESC ? "DESC" : "ASC";
+      logEntryRequestData.sortingOrderDESC =
+        logEntryRequestData.sortingOrderDESC === undefined
+          ? false
+          : logEntryRequestData.sortingOrderDESC;
+      const order = logEntryRequestData.sortingOrderDESC ? "DESC" : "ASC";
 
-      const queryParams: any[] = [sessionID, files];
+      const queryParams: any[] = [sessionID, logEntryRequestData.files];
       let queryString = `
       SELECT *
             FROM loggaroo.log_entry
@@ -36,35 +37,44 @@ export class LogEntryStore {
                 AND file_name = ANY($2)
                 `;
 
-      if (ip) {
-        queryParams.push(ip);
+      if (logEntryRequestData.filters?.ip) {
+        queryParams.push(logEntryRequestData.filters.ip);
         queryString += "AND service_ip = $" + queryParams.length;
       }
 
-      if (text) {
-        queryParams.push(text);
+      if (logEntryRequestData.filters?.text) {
+        queryParams.push(logEntryRequestData.filters.text);
         queryString += "AND content = $" + queryParams.length;
       }
 
-      if (regex) {
-        queryParams.push(regex);
+      if (logEntryRequestData.filters?.regex) {
+        queryParams.push(logEntryRequestData.filters.regex);
         queryString += "AND content ~ $" + queryParams.length;
       }
 
-      if (classification) {
-        queryParams.push(classification);
+      if (logEntryRequestData.filters?.classification) {
+        queryParams.push(logEntryRequestData.filters.classification);
         queryString += "AND service_ip = $" + queryParams.length;
       }
 
-      if (date) {
-        queryParams.push(date.from);
+      if (
+        logEntryRequestData.filters?.date?.to ||
+        logEntryRequestData.filters?.date?.from
+      ) {
+        if (logEntryRequestData.filters.date.from === undefined) {
+          queryParams.push(logEntryRequestData.filters.date.to);
+          queryString += `AND creation_date <= $${queryParams.length}`;
+        } else if (logEntryRequestData.filters.date.to === undefined) {
+          queryParams.push(logEntryRequestData.filters.date.from);
+          queryString += `AND creation_date >= $${queryParams.length}`;
+        } else {
+          queryParams.push(logEntryRequestData.filters.date.from);
+          queryParams.push(logEntryRequestData.filters.date.to);
 
-        if (date.to) queryParams.push(date.to);
-        else queryParams.push(new Date(Date.now()).toISOString().split("T")[0]);
-
-        queryString += `AND creation_date BETWEEN $${
-          queryParams.length - 1
-        } AND $${queryParams.length}`;
+          queryString += `AND creation_date BETWEEN $${
+            queryParams.length - 1
+          } AND $${queryParams.length}`;
+        }
       }
 
       queryString += `
@@ -73,7 +83,7 @@ export class LogEntryStore {
               LIMIT $${queryParams.length + 2}
               `;
 
-      queryParams.push(from, count);
+      queryParams.push(logEntryRequestData.from, logEntryRequestData.count);
 
       const query = {
         text: queryString,

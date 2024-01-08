@@ -22,7 +22,6 @@ export class LogEntryService {
     logEntryData: LogEntryRequestData,
   ): Promise<LogEntry[] | LogEntryRequestError> {
     try {
-      const files: string[] = logEntryData.files;
       const from: number = logEntryData.from;
       const count: number = logEntryData.count;
       const sortingOrderDESC = logEntryData.sortingOrderDESC;
@@ -39,33 +38,7 @@ export class LogEntryService {
         return LogEntryRequestError.wrongBodyData;
       }
 
-      let ip;
-      let text;
-      let regex;
-      let classification;
-      let date;
-
-      // filter
-      if (logEntryData.filters !== undefined) {
-        ip = logEntryData.filters.ip;
-        text = logEntryData.filters.text;
-        regex = logEntryData.filters.regex;
-        classification = logEntryData.filters.classification;
-        date = logEntryData.filters.date;
-      }
-
-      return await LogEntryStore.getInstance().get(
-        sessionID,
-        files,
-        from,
-        count,
-        sortingOrderDESC === undefined ? false : sortingOrderDESC,
-        ip,
-        text,
-        regex,
-        classification,
-        date,
-      );
+      return await LogEntryStore.getInstance().get(sessionID, logEntryData);
     } catch (e) {
       return LogEntryRequestError.wrongBodyData;
     }

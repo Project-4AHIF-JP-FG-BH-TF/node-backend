@@ -14,8 +14,8 @@ export type LogEntry = {
 };
 
 export enum Classification {
-  info,
-  error,
+  info = "info",
+  error = "error",
 }
 
 export type LogEntryRequestData = {
@@ -25,17 +25,19 @@ export type LogEntryRequestData = {
 
   sortingOrderDESC: boolean | undefined;
 
-  filters: {
-    date: RangeDate | undefined;
-    ip: string | undefined;
-    text: string | undefined;
-    regex: string | undefined;
-    classification: string | undefined;
-  };
+  filters: Filters | undefined;
+};
+
+export type Filters = {
+  date: RangeDate | undefined;
+  ip: string | undefined;
+  text: string | undefined;
+  regex: string | undefined;
+  classification: Classification | undefined;
 };
 
 export type RangeDate = {
-  from: Date;
+  from: Date | undefined;
   to: Date | undefined;
 };
 
