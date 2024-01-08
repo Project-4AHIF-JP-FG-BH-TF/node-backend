@@ -25,8 +25,16 @@ export class LogEntryService {
       const files: string[] = logEntryData.files;
       const from: number = logEntryData.from;
       const count: number = logEntryData.count;
+      const sortingOrderDESC = logEntryData.sortingOrderDESC;
 
       if (from < 0 || count < 0) {
+        return LogEntryRequestError.wrongBodyData;
+      }
+
+      if (
+        typeof sortingOrderDESC !== "boolean" &&
+        typeof sortingOrderDESC !== "undefined"
+      ) {
         return LogEntryRequestError.wrongBodyData;
       }
 
@@ -35,6 +43,7 @@ export class LogEntryService {
         files,
         from,
         count,
+        sortingOrderDESC === undefined ? false : sortingOrderDESC,
       );
     } catch (e) {
       return LogEntryRequestError.wrongBodyData;

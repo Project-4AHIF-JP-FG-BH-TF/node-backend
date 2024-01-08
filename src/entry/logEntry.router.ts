@@ -12,6 +12,7 @@ export function getLogEntryRouter(): Router {
 
   router.get("/:session", async (req, res) => {
     const sessionID: UUID = req.params.session as UUID;
+
     const logEntryData: LogEntryRequestData = req.body;
 
     if (
