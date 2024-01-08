@@ -31,7 +31,7 @@ export class LogEntryService {
         return LogEntryRequestError.wrongBodyData;
       }
 
-      //order
+      // order
       if (
         typeof sortingOrderDESC !== "boolean" &&
         typeof sortingOrderDESC !== "undefined"
@@ -39,13 +39,13 @@ export class LogEntryService {
         return LogEntryRequestError.wrongBodyData;
       }
 
-      let ip = undefined;
-      let text = undefined;
-      let regex = undefined;
-      let classification = undefined;
-      let date = undefined;
+      let ip;
+      let text;
+      let regex;
+      let classification;
+      let date;
 
-      //filter
+      // filter
       if (logEntryData.filters !== undefined) {
         ip = logEntryData.filters.ip;
         text = logEntryData.filters.text;
