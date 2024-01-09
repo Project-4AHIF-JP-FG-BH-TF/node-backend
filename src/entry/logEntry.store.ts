@@ -52,7 +52,7 @@ export class LogEntryStore {
 
       if (logEntryRequestData.filters?.classification) {
         queryParams.push(logEntryRequestData.filters.classification);
-        queryString += "AND service_ip = $" + queryParams.length;
+        queryString += "AND classification = $" + queryParams.length;
       }
 
       if (
