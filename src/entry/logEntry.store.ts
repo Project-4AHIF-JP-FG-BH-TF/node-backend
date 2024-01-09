@@ -1,6 +1,10 @@
 import { UUID } from "node:crypto";
 import { DatabaseService } from "../db/dbConfig";
-import { LogEntry, LogEntryRequestError } from "./logEntry";
+import {
+  LogEntry,
+  LogEntryRequestData,
+  LogEntryRequestError,
+} from "./logEntry";
 
 export class LogEntryStore {
   static instance: LogEntryStore | undefined;
@@ -15,25 +19,73 @@ export class LogEntryStore {
 
   async get(
     sessionID: UUID,
-    files: string[],
-    from: number,
-    count: number,
-    sortingOrderDESC: boolean,
+    logEntryRequestData: LogEntryRequestData,
   ): Promise<LogEntry[] | LogEntryRequestError> {
     try {
-      const order = sortingOrderDESC ? "DESC" : "ASC";
+      logEntryRequestData.order =
+        logEntryRequestData.order === undefined
+          ? "ASC"
+          : logEntryRequestData.order;
 
-      const query = {
-        text: `
-            SELECT *
+      const queryParams: any[] = [sessionID, logEntryRequestData.files];
+      let queryString = `
+      SELECT *
             FROM loggaroo.log_entry
               WHERE session_id = $1
                 AND file_name = ANY($2)
-              ORDER BY creation_date ${order}
-              OFFSET $3
-              LIMIT $4
-        `,
-        values: [sessionID, files, from, count],
+                `;
+
+      if (logEntryRequestData.filters?.ip) {
+        queryParams.push(logEntryRequestData.filters.ip);
+        queryString += "AND service_ip = $" + queryParams.length;
+      }
+
+      if (logEntryRequestData.filters?.text) {
+        queryParams.push(logEntryRequestData.filters.text);
+
+        if (logEntryRequestData.filters.regex) {
+          queryString += "AND content ~ $" + queryParams.length;
+        } else {
+          queryString += "AND content = $" + queryParams.length;
+        }
+      }
+
+      if (logEntryRequestData.filters?.classification) {
+        queryParams.push(logEntryRequestData.filters.classification);
+        queryString += "AND classification = $" + queryParams.length;
+      }
+
+      if (
+        logEntryRequestData.filters?.date?.to ||
+        logEntryRequestData.filters?.date?.from
+      ) {
+        if (logEntryRequestData.filters.date.from === undefined) {
+          queryParams.push(logEntryRequestData.filters.date.to);
+          queryString += `AND creation_date <= $${queryParams.length}`;
+        } else if (logEntryRequestData.filters.date.to === undefined) {
+          queryParams.push(logEntryRequestData.filters.date.from);
+          queryString += `AND creation_date >= $${queryParams.length}`;
+        } else {
+          queryParams.push(logEntryRequestData.filters.date.from);
+          queryParams.push(logEntryRequestData.filters.date.to);
+
+          queryString += `AND creation_date BETWEEN $${
+            queryParams.length - 1
+          } AND $${queryParams.length}`;
+        }
+      }
+
+      queryString += `
+              ORDER BY creation_date ${logEntryRequestData.order}
+              OFFSET $${queryParams.length + 1}
+              LIMIT $${queryParams.length + 2}
+              `;
+
+      queryParams.push(logEntryRequestData.from, logEntryRequestData.count);
+
+      const query = {
+        text: queryString,
+        values: queryParams,
       };
 
       const result = await DatabaseService.getInstance()
