@@ -4,7 +4,6 @@ import {
   LogEntry,
   LogEntryRequestData,
   LogEntryRequestError,
-  RangeDate,
 } from "./logEntry";
 
 export class LogEntryStore {
@@ -44,7 +43,6 @@ export class LogEntryStore {
       if (logEntryRequestData.filters?.text) {
         queryParams.push(logEntryRequestData.filters.text);
 
-        //todo regex nullable
         if (logEntryRequestData.filters.regex) {
           queryString += "AND content ~ $" + queryParams.length;
         } else {
