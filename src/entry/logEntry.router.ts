@@ -13,7 +13,13 @@ export function getLogEntryRouter(): Router {
   router.get("/:session", async (req, res) => {
     const sessionID: UUID = req.params.session as UUID;
 
-    const logEntryData: LogEntryRequestData = req.body;
+    const logEntryData: LogEntryRequestData =
+      req.query as unknown as LogEntryRequestData;
+
+    // @ts-ignore
+    logEntryData.filters = JSON.parse(logEntryData.filters);
+    logEntryData.from = parseInt(String(logEntryData.from));
+    logEntryData.count = parseInt(String(logEntryData.count));
 
     if (
       !Number.isFinite(logEntryData.from) ||
