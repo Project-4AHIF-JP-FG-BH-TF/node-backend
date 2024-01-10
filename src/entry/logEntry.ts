@@ -13,6 +13,10 @@ export type LogEntry = {
   content: string;
 };
 
+export type IP = {
+  ip: string;
+};
+
 export enum Classification {
   info = "info",
   error = "error",
@@ -25,6 +29,11 @@ export type LogEntryRequestData = {
 
   order: "ASC" | "DESC" | undefined;
 
+  filters: Filters | undefined;
+};
+
+export type IPRequestData = {
+  files: string[];
   filters: Filters | undefined;
 };
 
@@ -41,7 +50,7 @@ export type RangeDate = {
   to: Date | undefined;
 };
 
-export enum LogEntryRequestError {
+export enum RequestError {
   wrongBodyData,
   serverError,
 }
