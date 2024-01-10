@@ -6,7 +6,6 @@ import {
   LogEntryRequestData,
   LogEntryRequestError,
 } from "./logEntry";
-import {parse} from "dotenv";
 
 export function getLogEntryRouter(): Router {
   const router = Router();
