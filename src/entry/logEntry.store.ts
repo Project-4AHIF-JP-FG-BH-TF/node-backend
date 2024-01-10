@@ -39,7 +39,7 @@ export class LogEntryStore {
                 `;
 
       if (logEntryRequestData.filters) {
-        let queryData = this.applyFilters(
+        const queryData = this.applyFilters(
           logEntryRequestData.filters,
           queryString,
           queryParams,
@@ -87,7 +87,7 @@ export class LogEntryStore {
                 `;
 
       if (ipRequestData.filters) {
-        let queryData = this.applyFilters(
+        const queryData = this.applyFilters(
           ipRequestData.filters,
           queryString,
           queryParams,
@@ -106,10 +106,10 @@ export class LogEntryStore {
         .getClient()
         .query<IP>(query);
 
-      let ipObjs = result.rows;
+      const ipObjs = result.rows;
 
-      let ips: string[] = [];
-      for (let ip of ipObjs) {
+      const ips: string[] = [];
+      for (const ip of ipObjs) {
         ips.push(ip.ip);
       }
 
