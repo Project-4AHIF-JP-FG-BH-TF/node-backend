@@ -158,6 +158,6 @@ export class LogEntryStore {
       }
     }
 
-    return { queryString: queryString, queryParams: queryParams };
+    return { queryString, queryParams };
   }
 }
