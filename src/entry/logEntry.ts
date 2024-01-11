@@ -13,7 +13,7 @@ export type LogEntry = {
   content: string;
 };
 
-export type IP = {
+export type Ip = {
   ip: string;
 };
 
@@ -32,7 +32,7 @@ export type LogEntryRequestData = {
   filters: Filters | undefined;
 };
 
-export type IPRequestData = {
+export type IpRequestData = {
   files: string[];
   filters: Filters | undefined;
 };

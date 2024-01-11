@@ -2,8 +2,8 @@ import { UUID } from "node:crypto";
 import { DatabaseService } from "../db/dbConfig";
 import {
   Filters,
-  IP,
-  IPRequestData,
+  Ip,
+  IpRequestData,
   LogEntry,
   LogEntryRequestData,
   RequestError,
@@ -39,14 +39,14 @@ export class LogEntryStore {
                 `;
 
       if (logEntryRequestData.filters) {
-        const queryData = this.applyFilters(
+        const filteredQueryData = this.applyFilters(
           logEntryRequestData.filters,
           queryString,
           queryParams,
         );
 
-        queryParams = queryData.queryParams;
-        queryString = queryData.queryString;
+        queryParams = filteredQueryData.queryParams;
+        queryString = filteredQueryData.queryString;
       }
 
       queryString += `
@@ -73,9 +73,9 @@ export class LogEntryStore {
     }
   }
 
-  async getIPs(
+  async getIps(
     sessionID: UUID,
-    ipRequestData: IPRequestData,
+    ipRequestData: IpRequestData,
   ): Promise<string[] | RequestError> {
     try {
       let queryParams: any[] = [sessionID, ipRequestData.files];
@@ -87,14 +87,14 @@ export class LogEntryStore {
                 `;
 
       if (ipRequestData.filters) {
-        const queryData = this.applyFilters(
+        const filteredQueryData = this.applyFilters(
           ipRequestData.filters,
           queryString,
           queryParams,
         );
 
-        queryParams = queryData.queryParams;
-        queryString = queryData.queryString;
+        queryParams = filteredQueryData.queryParams;
+        queryString = filteredQueryData.queryString;
       }
 
       const query = {
@@ -104,16 +104,9 @@ export class LogEntryStore {
 
       const result = await DatabaseService.getInstance()
         .getClient()
-        .query<IP>(query);
+        .query<Ip>(query);
 
-      const ipObjs = result.rows;
-
-      const ips: string[] = [];
-      for (const ip of ipObjs) {
-        ips.push(ip.ip);
-      }
-
-      return ips;
+      return result.rows.map((e) => e.ip);
     } catch (e) {
       console.log(e);
       return RequestError.serverError;
@@ -121,6 +114,8 @@ export class LogEntryStore {
   }
 
   applyFilters(filters: Filters, queryString: string, queryParams: any[]) {
+    queryParams = [...queryParams];
+
     if (filters?.ip) {
       queryParams.push(filters.ip);
       queryString += "AND service_ip = $" + queryParams.length;
