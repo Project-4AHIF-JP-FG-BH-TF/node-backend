@@ -23,7 +23,7 @@ export function getSessionRouter(): Router {
     if (uuid) {
       res.status(200).json({ uuid }).end();
     } else {
-      res.status(500).end();
+      res.status(404).end();
     }
   });
 
