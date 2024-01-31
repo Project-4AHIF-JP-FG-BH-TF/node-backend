@@ -35,6 +35,10 @@ export class SessionService {
   }
 
   async refresh(session: UUID): Promise<UUID | null> {
+    if ((await SessionStore.getInstance().get(session)) == null) {
+      return null;
+    }
+
     return await SessionStore.getInstance().refresh(session);
   }
 
