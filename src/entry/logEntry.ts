@@ -10,8 +10,7 @@ export type LogEntry = {
   user_id: string | undefined;
   user_session_id: string | undefined;
   java_class: string;
-  content: string | undefined;
-  sql_combined: string | undefined;
+  content: string;
   sql_raw: string | undefined;
   sql_data: string | undefined;
 };
