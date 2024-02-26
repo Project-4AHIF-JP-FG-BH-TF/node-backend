@@ -6,11 +6,14 @@ export type LogEntry = {
   entry_nr: number;
   creation_date: Date;
   classification: Classification;
-  service_ip: string;
-  user_id: string;
-  user_session_id: string;
+  service_ip: string | undefined;
+  user_id: string | undefined;
+  user_session_id: string | undefined;
   java_class: string;
-  content: string;
+  content: string | undefined;
+  sql_combined: string | undefined;
+  sql_raw: string | undefined;
+  sql_data: string | undefined;
 };
 
 export type Ip = {
