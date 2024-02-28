@@ -16,7 +16,7 @@ export type LogEntry = {
 };
 
 export type Ip = {
-  ip: string;
+  service_ip: string;
 };
 
 export enum Classification {
