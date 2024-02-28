@@ -32,11 +32,11 @@ export class LogEntryStore {
 
       let queryParams: any[] = [sessionID, logEntryRequestData.files];
       let queryString = `
-      SELECT *
-            FROM loggaroo.log_entry
-              WHERE session_id = $1
-                AND file_name = ANY($2)
-                `;
+                SELECT *
+                FROM loggaroo.log_entry
+                WHERE session_id = $1
+                  AND file_name = ANY ($2)
+            `;
 
       if (logEntryRequestData.filters) {
         const filteredQueryData = this.applyFilters(
@@ -80,11 +80,11 @@ export class LogEntryStore {
     try {
       let queryParams: any[] = [sessionID, ipRequestData.files];
       let queryString = `
-      SELECT service_ip
-            FROM loggaroo.log_entry
-              WHERE session_id = $1
-                AND file_name = ANY($2)
-                `;
+                SELECT DISTINCT service_ip
+                FROM loggaroo.log_entry
+                WHERE session_id = $1
+                  AND file_name = ANY ($2)
+            `;
 
       if (ipRequestData.filters) {
         const filteredQueryData = this.applyFilters(
@@ -106,7 +106,7 @@ export class LogEntryStore {
         .getClient()
         .query<Ip>(query);
 
-      return result.rows.map((e) => e.ip);
+      return result.rows.map((e) => e.service_ip);
     } catch (e) {
       console.log(e);
       return RequestError.serverError;
