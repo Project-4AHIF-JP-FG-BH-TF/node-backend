@@ -22,11 +22,16 @@ export function getLogEntryRouter(): Router {
     logEntryData.from = parseInt(String(logEntryData.from));
     logEntryData.count = parseInt(String(logEntryData.count));
 
+    if (typeof (logEntryData.files as unknown) === "string") {
+      // @ts-ignore
+      logEntryData.files = [logEntryData.files];
+    }
+
+    if (typeof logEntryData.files === undefined) logEntryData.files = [];
+
     if (
       !Number.isFinite(logEntryData.from) ||
-      !Number.isFinite(logEntryData.count) ||
-      logEntryData.files === undefined ||
-      logEntryData.files.length === 0
+      !Number.isFinite(logEntryData.count)
     ) {
       res.status(400).end();
       return;
@@ -49,13 +54,15 @@ export function getLogEntryRouter(): Router {
 
     const ipRequestData: IpRequestData = req.query as unknown as IpRequestData;
 
+    if (typeof (ipRequestData.files as unknown) === "string") {
+      // @ts-ignore
+      ipRequestData.files = [ipRequestData.files];
+    }
+
+    if (typeof ipRequestData.files === undefined) ipRequestData.files = [];
+
     // @ts-ignore
     ipRequestData.filters = JSON.parse(ipRequestData.filters);
-
-    if (ipRequestData.files === undefined || ipRequestData.files.length === 0) {
-      res.status(400).end();
-      return;
-    }
 
     const ips: string[] | RequestError =
       await LogEntryService.getInstance().getIps(sessionID, ipRequestData);
