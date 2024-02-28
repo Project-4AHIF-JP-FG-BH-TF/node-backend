@@ -27,7 +27,7 @@ export function getLogEntryRouter(): Router {
       logEntryData.files = [logEntryData.files];
     }
 
-    if (typeof logEntryData.files === undefined) logEntryData.files = [];
+    if (logEntryData.files === undefined) logEntryData.files = [];
 
     if (
       !Number.isFinite(logEntryData.from) ||
@@ -59,7 +59,7 @@ export function getLogEntryRouter(): Router {
       ipRequestData.files = [ipRequestData.files];
     }
 
-    if (typeof ipRequestData.files === undefined) ipRequestData.files = [];
+    if (ipRequestData.files === undefined) ipRequestData.files = [];
 
     // @ts-ignore
     ipRequestData.filters = JSON.parse(ipRequestData.filters);
