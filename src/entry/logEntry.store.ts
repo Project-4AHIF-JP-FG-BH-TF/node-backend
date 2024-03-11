@@ -122,12 +122,12 @@ export class LogEntryStore {
     }
 
     if (filters?.text) {
-      queryParams.push(filters.text);
-
       if (filters.regex) {
+        queryParams.push(filters.text);
         queryString += "AND content ~ $" + queryParams.length;
       } else {
-        queryString += "AND content = $" + queryParams.length;
+        queryParams.push(`%${filters.text}%`);
+        queryString += "AND content LIKE $" + queryParams.length;
       }
     }
 
@@ -135,6 +135,9 @@ export class LogEntryStore {
       queryParams.push(filters.classification);
       queryString += "AND classification = $" + queryParams.length;
     }
+
+    //todo if i send from all good
+    //todo if i send to, from is '' and it crashes
 
     if (filters?.date?.to || filters?.date?.from) {
       if (filters.date.from === undefined) {
@@ -152,6 +155,9 @@ export class LogEntryStore {
         } AND $${queryParams.length}`;
       }
     }
+
+    console.log(queryString)
+    console.log(queryParams)
 
     return { queryString, queryParams };
   }
