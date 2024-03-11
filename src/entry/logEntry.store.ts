@@ -136,20 +136,24 @@ export class LogEntryStore {
       queryString += "AND classification = $" + queryParams.length;
     }
 
-    //todo if i send from all good
-    //todo if i send to, from is '' and it crashes
-
     if (filters.date?.to != undefined && filters.date.from != undefined) {
       queryParams.push(filters.date.from);
       queryParams.push(filters.date.to);
 
       queryString += `AND creation_date BETWEEN $${
-          queryParams.length - 1
+        queryParams.length - 1
       } AND $${queryParams.length}`;
-    } else if (filters.date?.from == undefined && filters.date?.to != undefined) {
+    } else if (
+      filters.date?.from == undefined &&
+      filters.date?.to != undefined
+    ) {
       queryParams.push(filters.date.to);
+
       queryString += `AND creation_date <= $${queryParams.length}`;
-    } else if (filters.date?.from != undefined && filters.date?.to == undefined) {
+    } else if (
+      filters.date?.from != undefined &&
+      filters.date?.to == undefined
+    ) {
       queryParams.push(filters.date.from);
       queryString += `AND creation_date >= $${queryParams.length}`;
     }
