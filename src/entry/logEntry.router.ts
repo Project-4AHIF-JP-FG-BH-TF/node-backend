@@ -31,13 +31,13 @@ export function getLogEntryRouter(): Router {
       const from = Date.parse(
         logEntryData.filters?.date?.from as unknown as string,
       );
-      console.log(logEntryData.filters.date.from)
+      console.log(logEntryData.filters.date.from);
 
       logEntryData.filters.date.from = !isNaN(from)
         ? new Date(from)
         : undefined;
 
-      console.log(logEntryData.filters.date.from)
+      console.log(logEntryData.filters.date.from);
     }
 
     if (typeof (logEntryData.files as unknown) === "string") {
@@ -84,16 +84,16 @@ export function getLogEntryRouter(): Router {
 
     if (ipRequestData.filters?.date) {
       const to = Date.parse(
-          ipRequestData.filters?.date?.to as unknown as string,
+        ipRequestData.filters?.date?.to as unknown as string,
       );
       ipRequestData.filters.date.to = !isNaN(to) ? new Date(to) : undefined;
 
       const from = Date.parse(
-          ipRequestData.filters?.date?.from as unknown as string,
+        ipRequestData.filters?.date?.from as unknown as string,
       );
       ipRequestData.filters.date.from = !isNaN(from)
-          ? new Date(from)
-          : undefined;
+        ? new Date(from)
+        : undefined;
     }
 
     const ips: string[] | RequestError =
