@@ -22,6 +22,20 @@ export function getLogEntryRouter(): Router {
     logEntryData.from = parseInt(String(logEntryData.from));
     logEntryData.count = parseInt(String(logEntryData.count));
 
+    if (logEntryData.filters?.date) {
+      const to = Date.parse(
+        logEntryData.filters?.date?.to as unknown as string,
+      );
+      logEntryData.filters.date.to = !isNaN(to) ? new Date(to) : undefined;
+
+      const from = Date.parse(
+        logEntryData.filters?.date?.from as unknown as string,
+      );
+      logEntryData.filters.date.from = !isNaN(from)
+        ? new Date(from)
+        : undefined;
+    }
+
     if (typeof (logEntryData.files as unknown) === "string") {
       // @ts-ignore
       logEntryData.files = [logEntryData.files];
@@ -63,6 +77,20 @@ export function getLogEntryRouter(): Router {
 
     // @ts-ignore
     ipRequestData.filters = JSON.parse(ipRequestData.filters);
+
+    if (ipRequestData.filters?.date) {
+      const to = Date.parse(
+          ipRequestData.filters?.date?.to as unknown as string,
+      );
+      ipRequestData.filters.date.to = !isNaN(to) ? new Date(to) : undefined;
+
+      const from = Date.parse(
+          ipRequestData.filters?.date?.from as unknown as string,
+      );
+      ipRequestData.filters.date.from = !isNaN(from)
+          ? new Date(from)
+          : undefined;
+    }
 
     const ips: string[] | RequestError =
       await LogEntryService.getInstance().getIps(sessionID, ipRequestData);
