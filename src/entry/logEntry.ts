@@ -19,10 +19,9 @@ export type Ip = {
   service_ip: string;
 };
 
-export enum Classification {
-  info = "info",
-  error = "error",
-}
+export type Classification = {
+  classification: string;
+};
 
 export type LogEntryRequestData = {
   from: number;
@@ -39,12 +38,17 @@ export type IpRequestData = {
   filters: Filters | undefined;
 };
 
+export type ClassificationRequestData = {
+  files: string[];
+  filters: Filters | undefined;
+};
+
 export type Filters = {
   date: RangeDate | undefined;
   ip: string | undefined;
   text: string | undefined;
   regex: boolean | undefined;
-  classification: Classification | undefined;
+  classification: string | undefined;
 };
 
 export type RangeDate = {

@@ -2,6 +2,7 @@ import { UUID } from "node:crypto";
 import { Router } from "express";
 import { LogEntryService } from "./logEntry.service";
 import {
+  ClassificationRequestData,
   IpRequestData,
   LogEntry,
   LogEntryRequestData,
@@ -76,5 +77,35 @@ export function getLogEntryRouter(): Router {
     }
   });
 
+  router.get("/:session/classifications", async (req, res) => {
+    const sessionID: UUID = req.params.session as UUID;
+
+    const request: ClassificationRequestData =
+      req.query as unknown as ClassificationRequestData;
+
+    if (typeof (request.files as unknown) === "string") {
+      // @ts-ignore
+      request.files = [request.files];
+    }
+
+    if (request.files === undefined) request.files = [];
+
+    // @ts-ignore
+    request.filters = JSON.parse(request.filters);
+
+    const classifications: string[] | RequestError =
+      await LogEntryService.getInstance().getClassifications(
+        sessionID,
+        request,
+      );
+
+    if (classifications === RequestError.serverError) {
+      res.status(500).end();
+    } else if (classifications === RequestError.wrongBodyData) {
+      res.status(400).end();
+    } else {
+      res.status(200).json({ ips: classifications }).end();
+    }
+  });
   return router;
 }

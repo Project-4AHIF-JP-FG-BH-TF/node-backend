@@ -1,6 +1,8 @@
 import { UUID } from "node:crypto";
 import { DatabaseService } from "../db/dbConfig";
 import {
+  Classification,
+  ClassificationRequestData,
   Filters,
   Ip,
   IpRequestData,
@@ -107,6 +109,46 @@ export class LogEntryStore {
         .query<Ip>(query);
 
       return result.rows.map((e) => e.service_ip);
+    } catch (e) {
+      console.log(e);
+      return RequestError.serverError;
+    }
+  }
+
+  async getClassifications(
+    sessionID: UUID,
+    classificationRequestData: ClassificationRequestData,
+  ): Promise<string[] | RequestError> {
+    try {
+      let queryParams: any[] = [sessionID, classificationRequestData.files];
+      let queryString = `
+                SELECT DISTINCT classification
+                FROM loggaroo.log_entry
+                WHERE session_id = $1
+                  AND file_name = ANY ($2)
+            `;
+
+      if (classificationRequestData.filters) {
+        const filteredQueryData = this.applyFilters(
+          classificationRequestData.filters,
+          queryString,
+          queryParams,
+        );
+
+        queryParams = filteredQueryData.queryParams;
+        queryString = filteredQueryData.queryString;
+      }
+
+      const query = {
+        text: queryString,
+        values: queryParams,
+      };
+
+      const result = await DatabaseService.getInstance()
+        .getClient()
+        .query<Classification>(query);
+
+      return result.rows.map((e) => e.classification);
     } catch (e) {
       console.log(e);
       return RequestError.serverError;
