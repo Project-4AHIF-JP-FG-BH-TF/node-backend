@@ -1,6 +1,7 @@
 import { UUID } from "node:crypto";
 import { LogEntryStore } from "./logEntry.store";
 import {
+  ClassificationRequestData,
   IpRequestData,
   LogEntry,
   LogEntryRequestData,
@@ -47,5 +48,15 @@ export class LogEntryService {
     ipRequestData: IpRequestData,
   ): Promise<string[] | RequestError> {
     return await LogEntryStore.getInstance().getIps(sessionID, ipRequestData);
+  }
+
+  async getClassifications(
+    sessionID: UUID,
+    classificationRequestData: ClassificationRequestData,
+  ): Promise<string[] | RequestError> {
+    return await LogEntryStore.getInstance().getClassifications(
+      sessionID,
+      classificationRequestData,
+    );
   }
 }
