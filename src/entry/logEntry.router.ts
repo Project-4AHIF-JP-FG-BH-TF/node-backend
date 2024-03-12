@@ -104,7 +104,7 @@ export function getLogEntryRouter(): Router {
     } else if (classifications === RequestError.wrongBodyData) {
       res.status(400).end();
     } else {
-      res.status(200).json({ ips: classifications }).end();
+      res.status(200).json({ classifications: classifications }).end();
     }
   });
   return router;
