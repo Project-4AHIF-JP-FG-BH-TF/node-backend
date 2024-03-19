@@ -31,13 +31,11 @@ export function getLogEntryRouter(): Router {
       const from = Date.parse(
         logEntryData.filters?.date?.from as unknown as string,
       );
-      console.log(logEntryData.filters.date.from);
 
       logEntryData.filters.date.from = !isNaN(from)
         ? new Date(from)
         : undefined;
 
-      console.log(logEntryData.filters.date.from);
     }
 
     if (typeof (logEntryData.files as unknown) === "string") {
