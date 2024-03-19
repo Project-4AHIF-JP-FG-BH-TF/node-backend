@@ -35,7 +35,6 @@ export function getLogEntryRouter(): Router {
       logEntryData.filters.date.from = !isNaN(from)
         ? new Date(from)
         : undefined;
-
     }
 
     if (typeof (logEntryData.files as unknown) === "string") {
