@@ -164,12 +164,12 @@ export class LogEntryStore {
     }
 
     if (filters?.text) {
-      queryParams.push(filters.text);
-
       if (filters.regex) {
+        queryParams.push(filters.text);
         queryString += "AND content ~ $" + queryParams.length;
       } else {
-        queryString += "AND content = $" + queryParams.length;
+        queryParams.push(`%${filters.text}%`);
+        queryString += "AND content LIKE $" + queryParams.length;
       }
     }
 
@@ -178,21 +178,26 @@ export class LogEntryStore {
       queryString += "AND classification = $" + queryParams.length;
     }
 
-    if (filters?.date?.to || filters?.date?.from) {
-      if (filters.date.from === undefined) {
-        queryParams.push(filters.date.to);
-        queryString += `AND creation_date <= $${queryParams.length}`;
-      } else if (filters.date.to === undefined) {
-        queryParams.push(filters.date.from);
-        queryString += `AND creation_date >= $${queryParams.length}`;
-      } else {
-        queryParams.push(filters.date.from);
-        queryParams.push(filters.date.to);
+    if (filters.date?.to !== undefined && filters.date.from !== undefined) {
+      queryParams.push(filters.date.from);
+      queryParams.push(filters.date.to);
 
-        queryString += `AND creation_date BETWEEN $${
-          queryParams.length - 1
-        } AND $${queryParams.length}`;
-      }
+      queryString += `AND creation_date BETWEEN $${
+        queryParams.length - 1
+      } AND $${queryParams.length}`;
+    } else if (
+      filters.date?.from === undefined &&
+      filters.date?.to !== undefined
+    ) {
+      queryParams.push(filters.date.to);
+
+      queryString += `AND creation_date <= $${queryParams.length}`;
+    } else if (
+      filters.date?.from !== undefined &&
+      filters.date?.to === undefined
+    ) {
+      queryParams.push(filters.date.from);
+      queryString += `AND creation_date >= $${queryParams.length}`;
     }
 
     return { queryString, queryParams };
