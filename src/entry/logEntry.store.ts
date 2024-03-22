@@ -2,10 +2,9 @@ import { UUID } from "node:crypto";
 import { DatabaseService } from "../db/dbConfig";
 import {
   Classification,
-  ClassificationRequestData,
+  FilteredRequestData,
   Filters,
   Ip,
-  IpRequestData,
   LogEntry,
   LogEntryRequestData,
   RequestError,
@@ -77,7 +76,7 @@ export class LogEntryStore {
 
   async getIps(
     sessionID: UUID,
-    ipRequestData: IpRequestData,
+    ipRequestData: FilteredRequestData,
   ): Promise<string[] | RequestError> {
     try {
       let queryParams: any[] = [sessionID, ipRequestData.files];
@@ -117,7 +116,7 @@ export class LogEntryStore {
 
   async getClassifications(
     sessionID: UUID,
-    classificationRequestData: ClassificationRequestData,
+    classificationRequestData: FilteredRequestData,
   ): Promise<string[] | RequestError> {
     try {
       let queryParams: any[] = [sessionID, classificationRequestData.files];

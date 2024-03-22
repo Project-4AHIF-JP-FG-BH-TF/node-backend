@@ -2,8 +2,7 @@ import { UUID } from "node:crypto";
 import { Router } from "express";
 import { LogEntryService } from "./logEntry.service";
 import {
-  ClassificationRequestData,
-  IpRequestData,
+  FilteredRequestData,
   LogEntry,
   LogEntryRequestData,
   RequestError,
@@ -68,31 +67,11 @@ export function getLogEntryRouter(): Router {
   router.get("/:session/ips", async (req, res) => {
     const sessionID: UUID = req.params.session as UUID;
 
-    const ipRequestData: IpRequestData = req.query as unknown as IpRequestData;
+    const ipRequestData = parseFilteredRequest(
+      req.query as unknown as FilteredRequestData,
+    );
 
-    if (typeof (ipRequestData.files as unknown) === "string") {
-      // @ts-ignore
-      ipRequestData.files = [ipRequestData.files];
-    }
-
-    if (ipRequestData.files === undefined) ipRequestData.files = [];
-
-    // @ts-ignore
-    ipRequestData.filters = JSON.parse(ipRequestData.filters);
-
-    if (ipRequestData.filters?.date) {
-      const to = Date.parse(
-        ipRequestData.filters?.date?.to as unknown as string,
-      );
-      ipRequestData.filters.date.to = !isNaN(to) ? new Date(to) : undefined;
-
-      const from = Date.parse(
-        ipRequestData.filters?.date?.from as unknown as string,
-      );
-      ipRequestData.filters.date.from = !isNaN(from)
-        ? new Date(from)
-        : undefined;
-    }
+    ipRequestData.filters!.ip = undefined;
 
     const ips: string[] | RequestError =
       await LogEntryService.getInstance().getIps(sessionID, ipRequestData);
@@ -109,18 +88,11 @@ export function getLogEntryRouter(): Router {
   router.get("/:session/classifications", async (req, res) => {
     const sessionID: UUID = req.params.session as UUID;
 
-    const request: ClassificationRequestData =
-      req.query as unknown as ClassificationRequestData;
+    const request = parseFilteredRequest(
+      req.query as unknown as FilteredRequestData,
+    );
 
-    if (typeof (request.files as unknown) === "string") {
-      // @ts-ignore
-      request.files = [request.files];
-    }
-
-    if (request.files === undefined) request.files = [];
-
-    // @ts-ignore
-    request.filters = JSON.parse(request.filters);
+    request.filters!.classification = undefined;
 
     const classifications: string[] | RequestError =
       await LogEntryService.getInstance().getClassifications(
@@ -137,4 +109,37 @@ export function getLogEntryRouter(): Router {
     }
   });
   return router;
+}
+
+function parseFilteredRequest(
+  rawFilteredRequestData: FilteredRequestData,
+): FilteredRequestData {
+  if (typeof (rawFilteredRequestData.files as unknown) === "string") {
+    // @ts-ignore
+    rawFilteredRequestData.files = [rawFilteredRequestData.files];
+  }
+
+  if (rawFilteredRequestData.files === undefined)
+    rawFilteredRequestData.files = [];
+
+  // @ts-ignore
+  rawFilteredRequestData.filters = JSON.parse(rawFilteredRequestData.filters);
+
+  if (rawFilteredRequestData.filters?.date) {
+    const to = Date.parse(
+      rawFilteredRequestData.filters?.date?.to as unknown as string,
+    );
+    rawFilteredRequestData.filters.date.to = !isNaN(to)
+      ? new Date(to)
+      : undefined;
+
+    const from = Date.parse(
+      rawFilteredRequestData.filters?.date?.from as unknown as string,
+    );
+    rawFilteredRequestData.filters.date.from = !isNaN(from)
+      ? new Date(from)
+      : undefined;
+  }
+
+  return rawFilteredRequestData;
 }
