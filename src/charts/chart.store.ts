@@ -1,8 +1,8 @@
 import { UUID } from "node:crypto";
 import { DatabaseService } from "../db/dbConfig";
-import { ClassificationChartData, RequestError } from "./chart";
 import { LogEntryStore } from "../entry/logEntry.store";
-import { Filters} from "../entry/logEntry";
+import { FilteredRequestData } from "../entry/logEntry";
+import { ClassificationChartData, RequestError } from "./chart";
 
 export class ChartStore {
   static instance: ChartStore | undefined;
@@ -17,18 +17,19 @@ export class ChartStore {
 
   async getClassificationChartData(
     sessionID: UUID,
-    filters: Filters,
+    filters: FilteredRequestData,
   ) {
-    let queryParams: any[] = [sessionID];
+    let queryParams: any[] = [sessionID, filters.files];
     let queryString = `
                 SELECT classification, COUNT(*) AS count
                 FROM loggaroo.log_entry
                 WHERE session_id = $1
+                    AND file_name = ANY ($2)
             `;
 
-    if (filters) {
+    if (filters.filters) {
       const filteredQueryData = LogEntryStore.getInstance().applyFilters(
-        filters,
+        filters.filters,
         queryString,
         queryParams,
       );
