@@ -1,7 +1,5 @@
-import { Classification } from "../entry/logEntry";
-
 export type ClassificationChartData = {
-  classification: Classification;
+  classification: string;
   count: number;
 };
 

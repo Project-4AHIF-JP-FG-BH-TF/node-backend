@@ -19,7 +19,7 @@ export function getChartRouter(): Router {
       "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$";
 
     if (!sessionID.match(regex)) {
-      res.status(500).end();
+      res.status(400).json({message: "invalid uuid"}).end();
       return;
     }
 
