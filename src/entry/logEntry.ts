@@ -33,12 +33,7 @@ export type LogEntryRequestData = {
   filters: Filters | undefined;
 };
 
-export type IpRequestData = {
-  files: string[];
-  filters: Filters | undefined;
-};
-
-export type ClassificationRequestData = {
+export type FilteredRequestData = {
   files: string[];
   filters: Filters | undefined;
 };
