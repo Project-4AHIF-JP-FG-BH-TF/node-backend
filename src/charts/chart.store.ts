@@ -1,6 +1,8 @@
 import { UUID } from "node:crypto";
 import { DatabaseService } from "../db/dbConfig";
 import { ClassificationChartData, RequestError } from "./chart";
+import { LogEntryStore } from "../entry/logEntry.store";
+import { Filters} from "../entry/logEntry";
 
 export class ChartStore {
   static instance: ChartStore | undefined;
@@ -13,15 +15,29 @@ export class ChartStore {
     return ChartStore.instance;
   }
 
-  async getClassificationChartData(sessionID: UUID) {
-    const queryParams: any[] = [sessionID];
-
-    const queryString = `
+  async getClassificationChartData(
+    sessionID: UUID,
+    filters: Filters,
+  ) {
+    let queryParams: any[] = [sessionID];
+    let queryString = `
                 SELECT classification, COUNT(*) AS count
                 FROM loggaroo.log_entry
                 WHERE session_id = $1
-                GROUP BY classification
             `;
+
+    if (filters) {
+      const filteredQueryData = LogEntryStore.getInstance().applyFilters(
+        filters,
+        queryString,
+        queryParams,
+      );
+
+      queryParams = filteredQueryData.queryParams;
+      queryString = filteredQueryData.queryString;
+    }
+
+    queryString += "GROUP BY classification";
 
     const query = {
       text: queryString,

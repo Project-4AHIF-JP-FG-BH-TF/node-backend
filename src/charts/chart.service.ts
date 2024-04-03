@@ -1,5 +1,6 @@
 import { UUID } from "node:crypto";
 import { ChartStore } from "./chart.store";
+import { Filters} from "../entry/logEntry";
 
 export class ChartService {
   static instance: ChartService | undefined;
@@ -12,7 +13,7 @@ export class ChartService {
     return ChartService.instance;
   }
 
-  async getClassificationChartData(sessionID: UUID) {
-    return await ChartStore.getInstance().getClassificationChartData(sessionID);
+  async getClassificationChartData(sessionID: UUID, filters: Filters) {
+    return await ChartStore.getInstance().getClassificationChartData(sessionID, filters);
   }
 }
