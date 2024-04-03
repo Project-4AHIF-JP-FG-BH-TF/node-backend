@@ -159,8 +159,8 @@ export class LogEntryStore {
     classificationRequestData: FilteredRequestData,
   ): Promise<number | RequestError> {
     try {
-      let queryParams: any[] = [sessionID, classificationRequestData.files];
-      let queryString = `
+      const queryParams: any[] = [sessionID, classificationRequestData.files];
+      const queryString = `
                 SELECT count(*) as count
                 FROM loggaroo.log_entry
                 WHERE session_id = $1

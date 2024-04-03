@@ -24,8 +24,8 @@ export type Classification = {
 };
 
 export type Counts = {
-  filtered: number,
-  all: number
+  filtered: number;
+  all: number;
 };
 
 export type LogEntryRequestData = {
