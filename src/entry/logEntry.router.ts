@@ -132,7 +132,7 @@ export function getLogEntryRouter(): Router {
   return router;
 }
 
-function parseFilteredRequest(
+export function parseFilteredRequest(
   rawFilteredRequestData: FilteredRequestData,
 ): FilteredRequestData {
   if (typeof (rawFilteredRequestData.files as unknown) === "string") {
@@ -143,23 +143,25 @@ function parseFilteredRequest(
   if (rawFilteredRequestData.files === undefined)
     rawFilteredRequestData.files = [];
 
-  // @ts-ignore
-  rawFilteredRequestData.filters = JSON.parse(rawFilteredRequestData.filters);
+  if (rawFilteredRequestData.filters !== undefined) {
+    // @ts-ignore
+    rawFilteredRequestData.filters = JSON.parse(rawFilteredRequestData.filters);
 
-  if (rawFilteredRequestData.filters?.date) {
-    const to = Date.parse(
-      rawFilteredRequestData.filters?.date?.to as unknown as string,
-    );
-    rawFilteredRequestData.filters.date.to = !isNaN(to)
-      ? new Date(to)
-      : undefined;
+    if (rawFilteredRequestData.filters?.date) {
+      const to = Date.parse(
+        rawFilteredRequestData.filters?.date?.to as unknown as string,
+      );
+      rawFilteredRequestData.filters.date.to = !isNaN(to)
+        ? new Date(to)
+        : undefined;
 
-    const from = Date.parse(
-      rawFilteredRequestData.filters?.date?.from as unknown as string,
-    );
-    rawFilteredRequestData.filters.date.from = !isNaN(from)
-      ? new Date(from)
-      : undefined;
+      const from = Date.parse(
+        rawFilteredRequestData.filters?.date?.from as unknown as string,
+      );
+      rawFilteredRequestData.filters.date.from = !isNaN(from)
+        ? new Date(from)
+        : undefined;
+    }
   }
 
   return rawFilteredRequestData;

@@ -8,6 +8,7 @@ import { getSessionRouter } from "./session/session.router";
 import { getLogEntryRouter } from "./entry/logEntry.router";
 import { DatabaseService } from "./db/dbConfig";
 import { getFilesRouter } from "./files/files.router";
+import { getChartRouter } from "./charts/chart.router";
 
 const port = parseInt(process.env.BACKEND_PORT as string);
 const server = express();
@@ -49,6 +50,7 @@ server.use("/api/example/", getExampleRouter());
 server.use("/api/session/", getSessionRouter());
 server.use("/api/log", getLogEntryRouter());
 server.use("/api/files", getFilesRouter());
+server.use("/api/charts", getChartRouter());
 
 server.listen(port, async () => {
   await DatabaseService.getInstance().getClient().connect();
