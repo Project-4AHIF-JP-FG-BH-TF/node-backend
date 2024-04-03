@@ -154,6 +154,75 @@ export class LogEntryStore {
     }
   }
 
+  async getAllCount(
+    sessionID: UUID,
+    classificationRequestData: FilteredRequestData,
+  ): Promise<number | RequestError> {
+    try {
+      const queryParams: any[] = [sessionID, classificationRequestData.files];
+      const queryString = `
+                SELECT count(*) as count
+                FROM loggaroo.log_entry
+                WHERE session_id = $1
+                  AND file_name = ANY ($2)
+            `;
+
+      const query = {
+        text: queryString,
+        values: queryParams,
+      };
+
+      const result = await DatabaseService.getInstance()
+        .getClient()
+        .query<{ count: number }>(query);
+
+      return result.rows.map((e) => e.count)[0];
+    } catch (e) {
+      console.log(e);
+      return RequestError.serverError;
+    }
+  }
+
+  async getFilterCount(
+    sessionID: UUID,
+    classificationRequestData: FilteredRequestData,
+  ): Promise<number | RequestError> {
+    try {
+      let queryParams: any[] = [sessionID, classificationRequestData.files];
+      let queryString = `
+                SELECT count(*) as count
+                FROM loggaroo.log_entry
+                WHERE session_id = $1
+                  AND file_name = ANY ($2)
+            `;
+
+      if (classificationRequestData.filters) {
+        const filteredQueryData = this.applyFilters(
+          classificationRequestData.filters,
+          queryString,
+          queryParams,
+        );
+
+        queryParams = filteredQueryData.queryParams;
+        queryString = filteredQueryData.queryString;
+      }
+
+      const query = {
+        text: queryString,
+        values: queryParams,
+      };
+
+      const result = await DatabaseService.getInstance()
+        .getClient()
+        .query<{ count: number }>(query);
+
+      return result.rows.map((e) => e.count)[0];
+    } catch (e) {
+      console.log(e);
+      return RequestError.serverError;
+    }
+  }
+
   applyFilters(filters: Filters, queryString: string, queryParams: any[]) {
     queryParams = [...queryParams];
 

@@ -2,6 +2,7 @@ import { UUID } from "node:crypto";
 import { Router } from "express";
 import { LogEntryService } from "./logEntry.service";
 import {
+  Counts,
   FilteredRequestData,
   LogEntry,
   LogEntryRequestData,
@@ -108,6 +109,26 @@ export function getLogEntryRouter(): Router {
       res.status(200).json({ classifications }).end();
     }
   });
+
+  router.get("/:session/count", async (req, res) => {
+    const sessionID: UUID = req.params.session as UUID;
+
+    const request = parseFilteredRequest(
+      req.query as unknown as FilteredRequestData,
+    );
+
+    const counts: Counts | RequestError =
+      await LogEntryService.getInstance().getCount(sessionID, request);
+
+    if (counts === RequestError.serverError) {
+      res.status(500).end();
+    } else if (counts === RequestError.wrongBodyData) {
+      res.status(400).end();
+    } else {
+      res.status(200).json(counts).end();
+    }
+  });
+
   return router;
 }
 

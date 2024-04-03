@@ -23,6 +23,11 @@ export type Classification = {
   classification: string;
 };
 
+export type Counts = {
+  filtered: number;
+  all: number;
+};
+
 export type LogEntryRequestData = {
   from: number;
   count: number;
