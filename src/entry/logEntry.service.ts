@@ -1,6 +1,7 @@
 import { UUID } from "node:crypto";
 import { LogEntryStore } from "./logEntry.store";
 import {
+  Counts,
   FilteredRequestData,
   LogEntry,
   LogEntryRequestData,
@@ -57,5 +58,21 @@ export class LogEntryService {
       sessionID,
       classificationRequestData,
     );
+  }
+
+  async getCount(
+    sessionID: UUID,
+    classificationRequestData: FilteredRequestData,
+  ): Promise<Counts | RequestError> {
+    return {
+      all: await LogEntryStore.getInstance().getAllCount(
+        sessionID,
+        classificationRequestData,
+      ),
+      filtered: await LogEntryStore.getInstance().getFilterCount(
+        sessionID,
+        classificationRequestData,
+      ),
+    };
   }
 }
