@@ -21,7 +21,7 @@ export class ChartStore {
   ) {
     let queryParams: any[] = [sessionID, filters.files];
     let queryString = `
-                SELECT classification, COUNT(*) AS count
+                SELECT classification, COUNT(*) 
                 FROM loggaroo.log_entry
                 WHERE session_id = $1
                     AND file_name = ANY ($2)
