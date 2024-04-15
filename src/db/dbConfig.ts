@@ -1,9 +1,9 @@
-import { Client, types } from "pg";
+import { Pool, types } from "pg";
 import "dotenv/config";
 
 export class DatabaseService {
   private static instance: DatabaseService | undefined;
-  private readonly client: Client;
+  private readonly client: Pool;
 
   private constructor() {
     // fix weird time parsing behavior happening because of timezones
@@ -11,7 +11,7 @@ export class DatabaseService {
       return new Date(Date.parse(stringValue + "+0000"));
     });
 
-    this.client = new Client({
+    this.client = new Pool({
       host: process.env.DB_HOST,
       port: parseInt(process.env.DB_PORT as string),
       database: process.env.DATABASE,
@@ -27,7 +27,7 @@ export class DatabaseService {
     return DatabaseService.instance;
   }
 
-  getClient(): Client {
+  getClient(): Pool {
     return this.client;
   }
 }
