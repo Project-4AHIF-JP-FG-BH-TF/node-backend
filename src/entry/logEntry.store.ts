@@ -247,24 +247,23 @@ export class LogEntryStore {
     }
 
     if (filters.date?.to !== undefined && filters.date.from !== undefined) {
-      queryParams.push(filters.date.from);
-      queryParams.push(filters.date.to);
+      queryParams.push(filters.date.from.toISOString());
+      queryParams.push(filters.date.to.toISOString());
 
-      queryString += `AND creation_date BETWEEN $${
+      queryString += ` AND creation_date BETWEEN $${
         queryParams.length - 1
       } AND $${queryParams.length}`;
     } else if (
       filters.date?.from === undefined &&
       filters.date?.to !== undefined
     ) {
-      queryParams.push(filters.date.to);
-
+      queryParams.push(filters.date.to.toISOString());
       queryString += `AND creation_date <= $${queryParams.length}`;
     } else if (
       filters.date?.from !== undefined &&
       filters.date?.to === undefined
     ) {
-      queryParams.push(filters.date.from);
+      queryParams.push(filters.date.from.toISOString());
       queryString += `AND creation_date >= $${queryParams.length}`;
     }
 
