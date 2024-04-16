@@ -22,4 +22,14 @@ export class ChartService {
       filters,
     );
   }
+
+  async getClassChartData(
+      sessionID: UUID,
+      filters: FilteredRequestData,
+  ) {
+    return await ChartStore.getInstance().getClassChartData(
+        sessionID,
+        filters,
+    );
+  }
 }

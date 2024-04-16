@@ -53,4 +53,43 @@ export class ChartStore {
       ? RequestError.wrongSessionToken
       : result.rows;
   }
+
+  async getClassChartData(
+      sessionID: UUID,
+      filters: FilteredRequestData,
+  ) {
+    let queryParams: any[] = [sessionID, filters.files];
+    let queryString = `
+                SELECT java_class, COUNT(*) AS count
+                FROM loggaroo.log_entry
+                WHERE session_id = $1
+                    AND file_name = ANY ($2)
+            `;
+
+    if (filters.filters) {
+      const filteredQueryData = LogEntryStore.getInstance().applyFilters(
+          filters.filters,
+          queryString,
+          queryParams,
+      );
+
+      queryParams = filteredQueryData.queryParams;
+      queryString = filteredQueryData.queryString;
+    }
+
+    queryString += "GROUP BY java_class";
+
+    const query = {
+      text: queryString,
+      values: queryParams,
+    };
+
+    const result = await DatabaseService.getInstance()
+        .getClient()
+        .query<ClassificationChartData>(query);
+
+    return result.rows.length === 0
+        ? RequestError.wrongSessionToken
+        : result.rows;
+  }
 }
