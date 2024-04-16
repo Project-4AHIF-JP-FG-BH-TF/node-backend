@@ -47,7 +47,22 @@ export class LogEntryService {
     sessionID: UUID,
     ipRequestData: FilteredRequestData,
   ): Promise<string[] | RequestError> {
-    return await LogEntryStore.getInstance().getIps(sessionID, ipRequestData);
+    const ips = await LogEntryStore.getInstance().getIps(
+      sessionID,
+      ipRequestData,
+    );
+
+    if (typeof ips === "number") {
+      return ips;
+    }
+
+    ips.sort((a, b) => {
+      return (a || "").localeCompare(b || "", undefined, {
+        numeric: true,
+      });
+    });
+
+    return ips;
   }
 
   async getClassifications(
