@@ -54,10 +54,7 @@ export class ChartStore {
       : result.rows;
   }
 
-  async getClassChartData(
-      sessionID: UUID,
-      filters: FilteredRequestData,
-  ) {
+  async getClassChartData(sessionID: UUID, filters: FilteredRequestData) {
     let queryParams: any[] = [sessionID, filters.files];
     let queryString = `
                 SELECT java_class, COUNT(*) AS count
@@ -68,9 +65,9 @@ export class ChartStore {
 
     if (filters.filters) {
       const filteredQueryData = LogEntryStore.getInstance().applyFilters(
-          filters.filters,
-          queryString,
-          queryParams,
+        filters.filters,
+        queryString,
+        queryParams,
       );
 
       queryParams = filteredQueryData.queryParams;
@@ -85,11 +82,11 @@ export class ChartStore {
     };
 
     const result = await DatabaseService.getInstance()
-        .getClient()
-        .query<ClassificationChartData>(query);
+      .getClient()
+      .query<ClassificationChartData>(query);
 
     return result.rows.length === 0
-        ? RequestError.wrongSessionToken
-        : result.rows;
+      ? RequestError.wrongSessionToken
+      : result.rows;
   }
 }
