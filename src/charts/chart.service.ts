@@ -23,6 +23,16 @@ export class ChartService {
     );
   }
 
+  async getClassificationTimeChartData(
+      sessionID: UUID,
+      filters: FilteredRequestData,
+  ) {
+    return await ChartStore.getInstance().getClassificationTimeChartData(
+        sessionID,
+        filters,
+    );
+  }
+
   async getClassChartData(sessionID: UUID, filters: FilteredRequestData) {
     return await ChartStore.getInstance().getClassChartData(sessionID, filters);
   }
