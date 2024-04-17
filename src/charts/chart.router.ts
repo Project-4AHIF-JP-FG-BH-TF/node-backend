@@ -60,21 +60,22 @@ export function getChartRouter(): Router {
     const sessionID: UUID = req.params.session as UUID;
 
     const request = parseFilteredRequest(
-        req.query as unknown as FilteredRequestData,
+      req.query as unknown as FilteredRequestData,
     );
 
     const regex =
-        "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$";
+      "^[0-9a-fA-F]{8}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{4}\\b-[0-9a-fA-F]{12}$";
 
     if (!sessionID.match(regex)) {
       res.status(400).json({ message: "invalid uuid" }).end();
       return;
     }
 
-    const data = await ChartService.getInstance().getClassificationTimeChartData(
+    const data =
+      await ChartService.getInstance().getClassificationTimeChartData(
         sessionID,
         request,
-    );
+      );
 
     if (data === RequestError.wrongSessionToken) res.status(400).end();
     else res.status(200).json({ data }).end();

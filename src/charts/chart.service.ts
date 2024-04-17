@@ -24,12 +24,12 @@ export class ChartService {
   }
 
   async getClassificationTimeChartData(
-      sessionID: UUID,
-      filters: FilteredRequestData,
+    sessionID: UUID,
+    filters: FilteredRequestData,
   ) {
     return await ChartStore.getInstance().getClassificationTimeChartData(
-        sessionID,
-        filters,
+      sessionID,
+      filters,
     );
   }
 

@@ -96,17 +96,28 @@ export class ChartStore {
   ) {
     const dates = await this.getTimeStamps(sessionID, filters);
 
-    let obj: { [key: string]: ClassificationChartData[] } = {};
+    const obj: { [key: string]: { [key: string]: number } } = {};
 
     for (let i = 0; i < dates.length; i++) {
-      //date null
-      filters.filters!.date!.from = dates[i];
-      filters.filters!.date!.to = dates[i + 1];
+      filters.filters = {
+        classification: undefined,
+        date: { from: dates[i], to: dates[i + 1] },
+        ip: undefined,
+        regex: undefined,
+        text: undefined,
+      };
 
-      let data = await this.getClassificationChartData(sessionID, filters);
+      const data = await this.getClassificationChartData(sessionID, filters);
 
-      if (data === RequestError.wrongSessionToken) return data;
-      else obj[dates[i].toISOString()] = data;
+      if (data !== RequestError.wrongSessionToken) {
+        const newData: { [key: string]: number } = {};
+
+        for (const dataKey of data) {
+          newData[dataKey.classification] = dataKey.count;
+        }
+
+        obj[dates[i].toISOString()] = newData;
+      }
     }
 
     return obj;
@@ -143,12 +154,12 @@ export class ChartStore {
 
     const rows = result.rows[0];
 
-    let totalDuration = rows.max.getTime() - rows.min.getTime();
-    let intervalLength = totalDuration / 99;
-    let equalSpacedData = [rows.min];
+    const totalDuration = rows.max.getTime() - rows.min.getTime();
+    const intervalLength = totalDuration / 99;
+    const equalSpacedData = [rows.min];
 
     for (let i = 1; i < 99; i++) {
-      let newTime = new Date(
+      const newTime = new Date(
         equalSpacedData[equalSpacedData.length - 1].getTime() + intervalLength,
       );
       equalSpacedData.push(newTime);
