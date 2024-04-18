@@ -98,6 +98,8 @@ export class ChartStore {
 
     const obj: { [key: string]: { [key: string]: number } } = {};
 
+    const promises = [];
+
     for (let i = 0; i < dates.length; i++) {
       filters.filters = {
         classification: undefined,
@@ -107,7 +109,11 @@ export class ChartStore {
         text: undefined,
       };
 
-      const data = await this.getClassificationChartData(sessionID, filters);
+      promises.push(this.getClassificationChartData(sessionID, filters));
+    }
+
+    for (let i = 0; i < promises.length; i++) {
+      let data = await promises[i];
 
       if (data !== RequestError.wrongSessionToken) {
         const newData: { [key: string]: number } = {};
