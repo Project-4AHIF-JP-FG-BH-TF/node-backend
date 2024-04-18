@@ -113,7 +113,7 @@ export class ChartStore {
     }
 
     for (let i = 0; i < promises.length; i++) {
-      let data = await promises[i];
+      const data = await promises[i];
 
       if (data !== RequestError.wrongSessionToken) {
         const newData: { [key: string]: number } = {};
