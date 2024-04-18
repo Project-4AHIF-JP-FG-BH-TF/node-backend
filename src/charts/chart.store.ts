@@ -96,18 +96,22 @@ export class ChartStore {
   ) {
     const dates = await this.getTimeStamps(sessionID, filters);
 
+    if (filters.filters === null) {
+      filters.filters = {
+        classification: undefined,
+        date: undefined,
+        ip: undefined,
+        regex: undefined,
+        text: undefined,
+      };
+    }
+
     const obj: { [key: string]: { [key: string]: number } } = {};
 
     const promises = [];
 
     for (let i = 0; i < dates.length; i++) {
-      filters.filters = {
-        classification: undefined,
-        date: { from: dates[i], to: dates[i + 1] },
-        ip: undefined,
-        regex: undefined,
-        text: undefined,
-      };
+      filters.filters!.date = { from: dates[i], to: dates[i + 1] };
 
       promises.push(this.getClassificationChartData(sessionID, filters));
     }
@@ -115,15 +119,17 @@ export class ChartStore {
     for (let i = 0; i < promises.length; i++) {
       const data = await promises[i];
 
-      if (data !== RequestError.wrongSessionToken) {
-        const newData: { [key: string]: number } = {};
-
-        for (const dataKey of data) {
-          newData[dataKey.classification] = dataKey.count;
-        }
-
-        obj[dates[i].toISOString()] = newData;
+      if (data === RequestError.wrongSessionToken) {
+        return data;
       }
+
+      const newData: { [key: string]: number } = {};
+
+      for (const dataKey of data) {
+        newData[dataKey.classification] = dataKey.count;
+      }
+
+      obj[dates[i].toISOString()] = newData;
     }
 
     return obj;
