@@ -96,7 +96,7 @@ export class ChartStore {
   ) {
     const dates = await this.getTimeStamps(sessionID, filters);
 
-    if (filters.filters === null) {
+    if (filters.filters === undefined) {
       filters.filters = {
         classification: undefined,
         date: undefined,
@@ -120,7 +120,7 @@ export class ChartStore {
       const data = await promises[i];
 
       if (data === RequestError.wrongSessionToken) {
-        return data;
+        break;
       }
 
       const newData: { [key: string]: number } = {};
