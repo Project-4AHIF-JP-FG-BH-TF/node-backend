@@ -101,8 +101,8 @@ export class LogEntryService {
     );
 
     if (
-      messages == RequestError.serverError ||
-      messages == RequestError.wrongBodyData
+      messages === RequestError.serverError ||
+      messages === RequestError.wrongBodyData
     ) {
       return messages;
     }
@@ -111,25 +111,31 @@ export class LogEntryService {
 
     for (let message of messages) {
       if (message.sql_raw != undefined) {
-        exportString += `${message.creation_date.toISOString()} ${message.classification.toUpperCase()} [${
+        exportString += `${this.formatDate(
+          message.creation_date,
+        )} ${message.classification.toUpperCase()} [${
           message.service_ip != null ? message.service_ip : ""
         }] [${message.user_id != null ? message.user_id : ""}] [${
-          message.session_id != null ? message.session_id : ""
+          message.user_session_id != null ? message.user_session_id : ""
         }] [${message.java_class != null ? message.java_class : ""}] ${
           message.sql_raw
         }\n`;
-        exportString += `${message.creation_date.toISOString()} ${message.classification.toUpperCase()} [${
+        exportString += `${this.formatDate(
+          message.creation_date,
+        )} ${message.classification.toUpperCase()} [${
           message.service_ip != null ? message.service_ip : ""
         }] [${message.user_id != null ? message.user_id : ""}] [${
-          message.session_id != null ? message.session_id : ""
+          message.user_session_id != null ? message.user_session_id : ""
         }] [${message.java_class != null ? message.java_class : ""}] ${
           message.sql_data
         }\n`;
       } else {
-        exportString += `${message.creation_date.toISOString()} ${message.classification.toUpperCase()} [${
+        exportString += `${this.formatDate(
+          message.creation_date,
+        )} ${message.classification.toUpperCase()} [${
           message.service_ip != null ? message.service_ip : ""
         }] [${message.user_id != null ? message.user_id : ""}] [${
-          message.session_id != null ? message.session_id : ""
+          message.user_session_id != null ? message.user_session_id : ""
         }] [${message.java_class != null ? message.java_class : ""}] ${
           message.content
         }\n`;
@@ -137,5 +143,10 @@ export class LogEntryService {
     }
 
     return exportString;
+  }
+
+  formatDate(date: Date): string {
+    let text = date.toISOString();
+    return text.replace("T", " ").replace(".", ",").replace("Z", "");
   }
 }

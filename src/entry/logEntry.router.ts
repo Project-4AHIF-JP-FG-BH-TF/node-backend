@@ -11,6 +11,8 @@ import {
 } from "./logEntry";
 import path from "node:path";
 import * as fs from "node:fs";
+import { Compressor } from "xz";
+import { tmpdir } from "node:os";
 
 export function getLogEntryRouter(): Router {
   const router = Router();
@@ -148,44 +150,41 @@ export function getLogEntryRouter(): Router {
       res.status(400).end();
     }
 
-    fs.writeFileSync("export.txt", exportedFiles as string);
-    fs.writeFileSync("filters.json", JSON.stringify(request));
-
-    console.log("hi");
+    fs.writeFileSync(
+      path.join(tmpdir(), "export.txt"),
+      exportedFiles as string,
+    );
+    fs.writeFileSync(
+      path.join(tmpdir(), "filters.json"),
+      JSON.stringify(request),
+    );
 
     await create(
       {
-        file: path.join(__dirname, "export.tar"),
+        file: path.join(tmpdir(), "export.tar"),
         // gzip: false,
       },
-      ["export.txt", "filters.json"],
+      [path.join(tmpdir(), "export.txt"), path.join(tmpdir(), "filters.json")],
     );
 
-    console.log("hi2");
-
-    // const readStream = fs.createReadStream("export.tar");
-    // const writeStream = fs.createWriteStream("export.tar.xz");
-    //
-    // const compressor = createCompressor();
-    //
-    // readStream
-    //   .pipe(compressor) // compress with xz
-    //   .pipe(writeStream) // write to file
-    //   .on("finish", () => {
-    //     console.log(`Tar.xz archive created at export.tar.xz`);
-    //   });
-
-    res.status(200).sendFile(
-      "export.tar",
-      {
-        root: path.join(__dirname),
-      },
-      () => {
-        // fs.unlinkSync("export.txt");
-        // fs.unlinkSync("filters.json");
-        // fs.unlinkSync(path.join(__dirname, "export.tar.xz"));
-      },
+    const readStream = fs.createReadStream(path.join(tmpdir(), "export.tar"));
+    const writeStream = fs.createWriteStream(
+      path.join(tmpdir(), "export.tar.xz"),
     );
+
+    let compression = new Compressor({ preset: 9 });
+
+    readStream
+      .pipe(compression) // compress with xz
+      .pipe(writeStream) // write to file
+      .on("finish", () => {
+        res.status(200).sendFile(path.join(tmpdir(), "export.tar.xz"), () => {
+          fs.unlinkSync(path.join(tmpdir(), "export.txt"));
+          fs.unlinkSync(path.join(tmpdir(), "filters.json"));
+          fs.unlinkSync(path.join(tmpdir(), "export.tar"));
+          fs.unlinkSync(path.join(tmpdir(), "export.tar.xz"));
+        });
+      });
   });
 
   return router;
