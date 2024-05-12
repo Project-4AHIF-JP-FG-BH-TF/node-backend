@@ -90,4 +90,52 @@ export class LogEntryService {
       ),
     };
   }
+
+  async getExported(
+    sessionID: UUID,
+    classificationRequestData: FilteredRequestData,
+  ): Promise<string | RequestError> {
+    let messages = await LogEntryStore.getInstance().getAll(
+      sessionID,
+      classificationRequestData,
+    );
+
+    if (
+      messages == RequestError.serverError ||
+      messages == RequestError.wrongBodyData
+    ) {
+      return messages;
+    }
+
+    let exportString = "";
+
+    for (let message of messages) {
+      if (message.sql_raw != undefined) {
+        exportString += `${message.creation_date.toISOString()} ${message.classification.toUpperCase()} [${
+          message.service_ip != null ? message.service_ip : ""
+        }] [${message.user_id != null ? message.user_id : ""}] [${
+          message.session_id != null ? message.session_id : ""
+        }] [${message.java_class != null ? message.java_class : ""}] ${
+          message.sql_raw
+        }\n`;
+        exportString += `${message.creation_date.toISOString()} ${message.classification.toUpperCase()} [${
+          message.service_ip != null ? message.service_ip : ""
+        }] [${message.user_id != null ? message.user_id : ""}] [${
+          message.session_id != null ? message.session_id : ""
+        }] [${message.java_class != null ? message.java_class : ""}] ${
+          message.sql_data
+        }\n`;
+      } else {
+        exportString += `${message.creation_date.toISOString()} ${message.classification.toUpperCase()} [${
+          message.service_ip != null ? message.service_ip : ""
+        }] [${message.user_id != null ? message.user_id : ""}] [${
+          message.session_id != null ? message.session_id : ""
+        }] [${message.java_class != null ? message.java_class : ""}] ${
+          message.content
+        }\n`;
+      }
+    }
+
+    return exportString;
+  }
 }
