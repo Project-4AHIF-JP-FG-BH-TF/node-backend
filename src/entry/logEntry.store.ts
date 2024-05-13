@@ -74,6 +74,46 @@ export class LogEntryStore {
     }
   }
 
+  async getAll(
+    sessionID: UUID,
+    logEntryRequestData: FilteredRequestData,
+  ): Promise<LogEntry[] | RequestError> {
+    try {
+      let queryParams: any[] = [sessionID, logEntryRequestData.files];
+      let queryString = `
+                SELECT *
+                FROM loggaroo.log_entry
+                WHERE session_id = $1
+                  AND file_name = ANY ($2)
+            `;
+
+      if (logEntryRequestData.filters) {
+        const filteredQueryData = this.applyFilters(
+          logEntryRequestData.filters,
+          queryString,
+          queryParams,
+        );
+
+        queryParams = filteredQueryData.queryParams;
+        queryString = filteredQueryData.queryString;
+      }
+
+      const query = {
+        text: queryString,
+        values: queryParams,
+      };
+
+      const result = await DatabaseService.getInstance()
+        .getClient()
+        .query<LogEntry>(query);
+
+      return result.rows;
+    } catch (e) {
+      console.log(e);
+      return RequestError.serverError;
+    }
+  }
+
   async getIps(
     sessionID: UUID,
     ipRequestData: FilteredRequestData,

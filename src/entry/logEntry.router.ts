@@ -1,6 +1,7 @@
 import { UUID } from "node:crypto";
 import { Router } from "express";
 import { LogEntryService } from "./logEntry.service";
+import { create } from "tar";
 import {
   Counts,
   FilteredRequestData,
@@ -8,6 +9,10 @@ import {
   LogEntryRequestData,
   RequestError,
 } from "./logEntry";
+import path from "node:path";
+import * as fs from "node:fs";
+import { Compressor } from "xz";
+import { tmpdir } from "node:os";
 
 export function getLogEntryRouter(): Router {
   const router = Router();
@@ -127,6 +132,59 @@ export function getLogEntryRouter(): Router {
     } else {
       res.status(200).json(counts).end();
     }
+  });
+
+  router.get("/:session/export.tar.xz", async (req, res) => {
+    const sessionID: UUID = req.params.session as UUID;
+
+    const request = parseFilteredRequest(
+      req.query as unknown as FilteredRequestData,
+    );
+
+    const exportedFiles: string | RequestError =
+      await LogEntryService.getInstance().getExported(sessionID, request);
+
+    if (exportedFiles === RequestError.serverError) {
+      res.status(500).end();
+    } else if (exportedFiles === RequestError.wrongBodyData) {
+      res.status(400).end();
+    }
+
+    fs.writeFileSync(
+      path.join(tmpdir(), "export.txt"),
+      exportedFiles as string,
+    );
+    fs.writeFileSync(
+      path.join(tmpdir(), "filters.json"),
+      JSON.stringify(request),
+    );
+
+    await create(
+      {
+        file: path.join(tmpdir(), "export.tar"),
+        // gzip: false,
+      },
+      [path.join(tmpdir(), "export.txt"), path.join(tmpdir(), "filters.json")],
+    );
+
+    const readStream = fs.createReadStream(path.join(tmpdir(), "export.tar"));
+    const writeStream = fs.createWriteStream(
+      path.join(tmpdir(), "export.tar.xz"),
+    );
+
+    let compression = new Compressor({ preset: 9 });
+
+    readStream
+      .pipe(compression) // compress with xz
+      .pipe(writeStream) // write to file
+      .on("finish", () => {
+        res.status(200).sendFile(path.join(tmpdir(), "export.tar.xz"), () => {
+          fs.unlinkSync(path.join(tmpdir(), "export.txt"));
+          fs.unlinkSync(path.join(tmpdir(), "filters.json"));
+          fs.unlinkSync(path.join(tmpdir(), "export.tar"));
+          fs.unlinkSync(path.join(tmpdir(), "export.tar.xz"));
+        });
+      });
   });
 
   return router;

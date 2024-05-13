@@ -5,7 +5,7 @@ export type LogEntry = {
   file_name: string;
   entry_nr: number;
   creation_date: Date;
-  classification: Classification;
+  classification: string;
   service_ip: string | undefined;
   user_id: string | undefined;
   user_session_id: string | undefined;
@@ -17,10 +17,6 @@ export type LogEntry = {
 
 export type Ip = {
   service_ip: string;
-};
-
-export type Classification = {
-  classification: string;
 };
 
 export type Counts = {
