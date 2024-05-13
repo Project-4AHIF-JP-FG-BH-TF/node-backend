@@ -19,6 +19,10 @@ export type Ip = {
   service_ip: string;
 };
 
+export type Classification = {
+  classification: string;
+};
+
 export type Counts = {
   filtered: number;
   all: number;
