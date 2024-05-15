@@ -5,4 +5,5 @@ export type ClassificationChartData = {
 
 export enum RequestError {
   wrongSessionToken,
+  wrongParamData
 }

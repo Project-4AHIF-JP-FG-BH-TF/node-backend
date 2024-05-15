@@ -77,7 +77,10 @@ export function getChartRouter(): Router {
         request,
       );
 
+    console.log(data);
+
     if (data === RequestError.wrongSessionToken) res.status(400).end();
+    else if (data === RequestError.wrongParamData) res.status(404).end();
     else res.status(200).json({ data }).end();
   });
 
