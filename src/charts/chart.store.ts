@@ -74,7 +74,9 @@ export class ChartStore {
       queryString = filteredQueryData.queryString;
     }
 
-    queryString += "GROUP BY java_class";
+    queryString += "GROUP BY java_class ";
+    queryString += "ORDER BY count DESC ";
+    queryString += "LIMIT 25";
 
     const query = {
       text: queryString,
