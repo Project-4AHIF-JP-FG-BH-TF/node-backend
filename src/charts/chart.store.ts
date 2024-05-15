@@ -74,7 +74,9 @@ export class ChartStore {
       queryString = filteredQueryData.queryString;
     }
 
-    queryString += "GROUP BY java_class";
+    queryString += "GROUP BY java_class ";
+    queryString += "ORDER BY count DESC ";
+    queryString += "LIMIT 25";
 
     const query = {
       text: queryString,
@@ -95,6 +97,9 @@ export class ChartStore {
     filters: FilteredRequestData,
   ) {
     const dates = await this.getTimeStamps(sessionID, filters);
+
+    if (dates === RequestError.wrongParamData)
+      return RequestError.wrongParamData;
 
     if (filters.filters === null) {
       filters.filters = {
@@ -119,9 +124,7 @@ export class ChartStore {
     for (let i = 0; i < promises.length; i++) {
       const data = await promises[i];
 
-      if (data === RequestError.wrongSessionToken) {
-        return data;
-      }
+      if (data === RequestError.wrongSessionToken) continue;
 
       const newData: { [key: string]: number } = {};
 
@@ -165,6 +168,9 @@ export class ChartStore {
       .query<{ min: Date; max: Date }>(query);
 
     const rows = result.rows[0];
+
+    if (rows.max === null || rows.min === null)
+      return RequestError.wrongParamData;
 
     const totalDuration = rows.max.getTime() - rows.min.getTime();
     const intervalLength = totalDuration / 99;
