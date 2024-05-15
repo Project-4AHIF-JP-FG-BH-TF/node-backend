@@ -150,10 +150,10 @@ export function getLogEntryRouter(): Router {
       res.status(400).end();
     }
 
-    fs.writeFileSync(
-      path.join(tmpdir(), "export.txt"),
-      exportedFiles as string,
-    );
+    let date = new Date();
+    let fileName = `export-${date.toString()}.txt"`;
+
+    fs.writeFileSync(path.join(tmpdir(), fileName), exportedFiles as string);
     fs.writeFileSync(
       path.join(tmpdir(), "filters.json"),
       JSON.stringify(request),
@@ -164,7 +164,7 @@ export function getLogEntryRouter(): Router {
         file: path.join(tmpdir(), "export.tar"),
         // gzip: false,
       },
-      [path.join(tmpdir(), "export.txt"), path.join(tmpdir(), "filters.json")],
+      [path.join(tmpdir(), fileName), path.join(tmpdir(), "filters.json")],
     );
 
     const readStream = fs.createReadStream(path.join(tmpdir(), "export.tar"));
@@ -179,7 +179,7 @@ export function getLogEntryRouter(): Router {
       .pipe(writeStream) // write to file
       .on("finish", () => {
         res.status(200).sendFile(path.join(tmpdir(), "export.tar.xz"), () => {
-          fs.unlinkSync(path.join(tmpdir(), "export.txt"));
+          fs.unlinkSync(path.join(tmpdir(), fileName));
           fs.unlinkSync(path.join(tmpdir(), "filters.json"));
           fs.unlinkSync(path.join(tmpdir(), "export.tar"));
           fs.unlinkSync(path.join(tmpdir(), "export.tar.xz"));
